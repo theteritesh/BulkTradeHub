@@ -9,5 +9,4 @@ public class BulkTradeHubApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(BulkTradeHubApplication.class, args);
 	}
-
 }
