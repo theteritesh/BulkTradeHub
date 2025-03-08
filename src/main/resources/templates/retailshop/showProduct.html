@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/dashboardLayout :: Layout(~{::section})}">
+
+<head>
+</head>
+<section>
+	<div class="container mt-5 d-flex justify-content-center mb-5">
+		<div class="card shadow-lg p-4 rounded"
+			style="width: 95%; background: #ffffff; position: relative; padding-bottom: 20px;">
+			<h2 class="text-center mb-4">Product List</h2>
+			<table class="table table-hover table-bordered text-center align-middle">
+				<thead class="table-dark">
+					<tr>
+						<th>ID</th>
+						<th>Image</th>
+						<th>Name</th>
+						<th>Brand</th>
+						<th>Category</th>
+						<th>Description</th>
+						<th>Price</th>
+						<th>Cost</th>
+						<th>Unit Type</th>
+						<th>Unit Value</th>
+						<th>Total Quantity</th>
+						<th>Actions</th> <!-- New Column for Buttons -->
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="product : ${products}" class="table-light">
+						<td th:text="${product.id}"></td>
+						<td>
+							<img th:if="${product.image != null}" th:src="@{/products/image/{id}(id=${product.id})}"
+								alt="Product Image" class="rounded-circle border" width="80" height="80">
+						</td>
+						<td th:text="${product.name}"></td>
+						<td th:text="${product.brand}"></td>
+						<td th:text="${product.category}"></td>
+						<td th:text="${product.description}" class="text-wrap" style="max-width: 200px;"></td>
+						<td th:text="${product.price}"></td>
+						<td th:text="${product.cost}"></td>
+						<td th:text="${product.unitType}"></td>
+						<td th:text="${product.unitValue}"></td>
+						<td th:text="${product.totalQuantity}"></td>
+						<td>
+							<a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-primary btn-sm me-2">
+								<i class="bi bi-pen me-1"></i>Edit
+							</a>
+							<a th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-danger btn-sm"
+								onclick="return confirm('Are you sure you want to delete this product?');">
+								<i class="bi bi-trash me-1"></i>Delete
+							</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+</section>
+
+<body>
