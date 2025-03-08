@@ -1,9 +1,12 @@
 package com.technoworld.BulkTradeHub.retailshop.controller;
 
 import java.io.IOException;
+import java.util.List;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -82,4 +85,62 @@ public class ProductController {
         }
         return "redirect:/dashboard/showProducts";
     }
+    
+    
+    @PostMapping("/update")
+    public String updateProduct(@RequestParam Long id,
+                                @RequestParam String name,
+                                @RequestParam String category,
+                                @RequestParam String brand,
+                                @RequestParam String description,
+                                @RequestParam String unitType,
+                                @RequestParam Double unitValue,
+                                @RequestParam Double price,
+                                @RequestParam Double cost,
+                                @RequestParam int totalQuantity,
+                                @RequestParam(value = "image", required = false) MultipartFile file,
+                                RedirectAttributes redirectAttributes) {
+        try {
+            Product existingProduct = productService.getProductById(id);
+            if (existingProduct == null) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Product not found!");
+                return "redirect:/dashboard/showProducts";
+            }
+
+            // Update fields
+            existingProduct.setName(name);
+            existingProduct.setCategory(category);
+            existingProduct.setBrand(brand);
+            existingProduct.setDescription(description);
+            existingProduct.setUnitType(unitType);
+            existingProduct.setUnitValue(unitValue);
+            existingProduct.setPrice(price);
+            existingProduct.setCost(cost);
+            existingProduct.setTotalQuantity(totalQuantity);
+
+            // Update image only if a new file is uploaded
+            if (file != null && !file.isEmpty()) {
+                existingProduct.setImage(file.getBytes());
+            }
+
+            // Save the updated product
+            productService.saveProduct(existingProduct);
+            redirectAttributes.addFlashAttribute("successMessage", "Product updated successfully!");
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to update product.");
+        }
+
+        return "redirect:/dashboard/showProducts";
+    }
+    
+    @GetMapping("/search")
+    public String searchProducts(@RequestParam("query") String query, Model model) {
+        List<Product> filteredProducts = productService.searchProducts(query);
+        model.addAttribute("products", filteredProducts);
+        model.addAttribute("query", query); // Keep the search term in input field
+        return "/retailshop/showProduct"; // Ensure the correct Thymeleaf template is used
+    }
+
 }
