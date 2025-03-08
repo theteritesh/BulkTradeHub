@@ -36,8 +36,9 @@ public class DashboardController {
 	}
 	
 	@GetMapping("/showProducts")
-    public String displayProducts(Model model) {
+    public String displayProducts(Model model,@ModelAttribute("successMessage") String successMessage) {
         List<Product> productList = productService.getAllProducts();
+        model.addAttribute("successMessage", successMessage);
         model.addAttribute("products", productList);
         return "/retailshop/showProduct";
     }
