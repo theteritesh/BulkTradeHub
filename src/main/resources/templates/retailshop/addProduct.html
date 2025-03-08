@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/dashboardLayout :: Layout(~{::section})}">
+
+<head>
+</head>
+
+<body>
+	<section>
+		<style>
+			.add-product-page {
+				background-color: #f8f9fa;
+				height: 100vh;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+
+			.add-product-page .btn {
+				background-color: rgb(128, 128, 128);
+				color: white;
+			}
+
+			.card {
+				max-width: 600px;
+				width: 100%;
+				border-radius: 12px;
+				box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+				background: white;
+			}
+
+			.card-header {
+				background: rgb(128, 128, 128);
+				color: white;
+				border-top-left-radius: 12px;
+				border-top-right-radius: 12px;
+				text-align: center;
+				font-size: 1.4rem;
+				font-weight: bold;
+				padding: 15px;
+			}
+
+			.image-preview {
+				width: 150px;
+				height: 150px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				cursor: pointer;
+				overflow: hidden;
+				border-radius: 8px;
+				margin: auto;
+			}
+
+			.image-preview img {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+			}
+		</style>
+		<div class="add-product-page">
+			<div class="card shadow-lg">
+				<div class="card-header">
+					Add Product
+				</div>
+				<!--Massesge-->
+				<div th:if="${successMessage != null and not #strings.isEmpty(successMessage)}" class="alert alert-success text-center">
+				    <span th:text="${successMessage}"></span>
+				</div>
+				<div class="card-body">
+					<form class="row g-3" th:action="@{/products/add}" method="post" th:object="${product}"
+						enctype="multipart/form-data">
+
+						<!-- Image Upload -->
+						<div class="col-12 text-center">
+							<label for="productImage" class="form-label d-block mb-2">Select Photo</label>
+							<div class="image-preview" onclick="document.getElementById('productImage').click()">
+								<img id="previewImage" src="/retailshop/img/productDefault.png" alt="Default Image">
+							</div>
+							<input type="file" class="d-none" id="productImage" th:field="*{image}" accept="image/*"
+								onchange="previewFile()">
+						</div>
+
+						<!-- Name -->
+						<div class="col-12 form-floating">
+							<input type="text" class="form-control" id="productName" th:field="*{name}"
+								placeholder="Product Name">
+							<label for="productName">Product Name</label>
+						</div>
+
+						<!-- Category -->
+						<div class="col-md-6 form-floating">
+							<input type="text" class="form-control" id="productCategory" th:field="*{category}"
+								placeholder="Category">
+							<label for="productCategory">Category</label>
+						</div>
+
+						<!-- Brand -->
+						<div class="col-md-6 form-floating">
+							<input type="text" class="form-control" id="productBrand" th:field="*{brand}"
+								placeholder="Brand">
+							<label for="productBrand">Brand</label>
+						</div>
+
+						<!-- Description -->
+						<div class="col-12 form-floating">
+							<textarea class="form-control" id="productDescription" th:field="*{description}"
+								placeholder="Description"></textarea>
+							<label for="productDescription">Description</label>
+						</div>
+
+						<!-- Unit Type -->
+						<div class="col-md-6 form-floating">
+							<select class="form-select" id="unitType" th:field="*{unitType}">
+								<option value="" disabled selected>Select Unit Type</option>
+								<option value="pcs">Pieces</option>
+								<option value="kg">Kilograms</option>
+								<option value="g">Grams</option>
+								<option value="liters">Liters</option>
+								<option value="meters">Meters</option>
+							</select>
+							<label for="unitType">Unit Type</label>
+						</div>
+
+						<!-- Unit Value -->
+						<div class="col-md-6 form-floating">
+							<input type="number" class="form-control" id="unitValue" th:field="*{unitValue}"
+								placeholder="Unit Value">
+							<label for="unitValue">Unit Value</label>
+						</div>
+
+						<!-- Price -->
+						<div class="col-md-4 form-floating">
+							<input type="number" class="form-control" id="productPrice" th:field="*{price}"
+								placeholder="Price">
+							<label for="productPrice">Price</label>
+						</div>
+
+						<!-- Cost -->
+						<div class="col-md-4 form-floating">
+							<input type="number" class="form-control" id="productCost" th:field="*{cost}"
+								placeholder="Cost">
+							<label for="productCost">Cost</label>
+						</div>
+
+						<!-- Total Quantity -->
+						<div class="col-md-4 form-floating">
+							<input type="number" class="form-control" id="totalQuantity" th:field="*{totalQuantity}"
+								placeholder="Total Quantity">
+							<label for="totalQuantity">Total Quantity</label>
+						</div>
+
+						<!-- Submit Button -->
+						<div class="col-12 text-center">
+							<button type="submit" class="btn w-100">Submit</button>
+						</div>
+
+
+
+					</form>
+				</div>
+			</div>
+		</div>
+		<script>
+			function previewFile() {
+				const file = document.getElementById("productImage").files[0];
+				const preview = document.getElementById("previewImage");
+				if (file) {
+					const reader = new FileReader();
+					reader.onload = function (e) {
+						preview.src = e.target.result;
+					};
+					reader.readAsDataURL(file);
+				} else {
+					preview.src = "https://via.placeholder.com/150"; // Default Image
+				}
+			}
+		</script>
+	</section>
+</body>
+
+</html>

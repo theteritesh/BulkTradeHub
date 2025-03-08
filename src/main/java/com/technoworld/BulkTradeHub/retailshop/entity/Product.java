@@ -1,101 +1,131 @@
 package com.technoworld.BulkTradeHub.retailshop.entity;
 
+import java.util.Arrays;
+
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 
 @Entity
 @Table(name = "products")
 public class Product {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	    @Id
+	    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	    private Long id;
 
-    @NotBlank(message = "Product name is required")
-    private String name;
+	    private String name;
+	    private String category;
+	    private String brand;
+	    
+	    @Column(length = 1000) 
+	    private String description;
+	    
+	    private String unitType; 
+	    private Double unitValue;
+	    
+	    private Double price;
+	    private Double cost;
+	    private int totalQuantity;
+	    
+	    @Lob
+	    @Column(columnDefinition = "LONGBLOB") 
+	    private byte[] image;
 
-    private String brand;
+		public Long getId() {
+			return id;
+		}
 
-    @NotBlank(message = "Category is required")
-    private String category;
+		public void setId(Long id) {
+			this.id = id;
+		}
 
-    @NotBlank(message = "Description is required")
-    @Column(length = 500)
-    private String description;
+		public String getName() {
+			return name;
+		}
 
-    @NotBlank(message = "Unit selection is required")
-    private String unit;
+		public void setName(String name) {
+			this.name = name;
+		}
 
-    @NotNull(message = "Price is required")
-    private Double price;
+		public String getCategory() {
+			return category;
+		}
 
-    @NotNull(message = "Quantity is required")
-    private Integer qty;
+		public void setCategory(String category) {
+			this.category = category;
+		}
 
-    private String imageUrl;
+		public String getBrand() {
+			return brand;
+		}
 
-	public Long getId() {
-		return id;
-	}
+		public void setBrand(String brand) {
+			this.brand = brand;
+		}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+		public String getDescription() {
+			return description;
+		}
 
-	public String getName() {
-		return name;
-	}
+		public void setDescription(String description) {
+			this.description = description;
+		}
 
-	public void setName(String name) {
-		this.name = name;
-	}
+		public String getUnitType() {
+			return unitType;
+		}
 
-	public String getBrand() {
-		return brand;
-	}
+		public void setUnitType(String unitType) {
+			this.unitType = unitType;
+		}
 
-	public void setBrand(String brand) {
-		this.brand = brand;
-	}
+		public Double getUnitValue() {
+			return unitValue;
+		}
 
-	public String getCategory() {
-		return category;
-	}
+		public void setUnitValue(Double unitValue) {
+			this.unitValue = unitValue;
+		}
 
-	public void setCategory(String category) {
-		this.category = category;
-	}
+		public Double getPrice() {
+			return price;
+		}
 
-	public String getDescription() {
-		return description;
-	}
+		public void setPrice(Double price) {
+			this.price = price;
+		}
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+		public Double getCost() {
+			return cost;
+		}
 
-	public String getUnit() {
-		return unit;
-	}
+		public void setCost(Double cost) {
+			this.cost = cost;
+		}
 
-	public void setUnit(String unit) {
-		this.unit = unit;
-	}
+		public int getTotalQuantity() {
+			return totalQuantity;
+		}
 
-	public Double getPrice() {
-		return price;
-	}
+		public void setTotalQuantity(int totalQuantity) {
+			this.totalQuantity = totalQuantity;
+		}
 
-	public void setPrice(Double price) {
-		this.price = price;
-	}
+		public byte[] getImage() {
+			return image;
+		}
 
-	public Integer getQty() {
-		return qty;
-	}
+		public void setImage(byte[] image) {
+			this.image = image;
+		}
 
-	public void setQty(Integer qty) {
-		this.qty = qty;
-	}
-    
+		@Override
+		public String toString() {
+			return "Product [id=" + id + ", name=" + name + ", category=" + category + ", brand=" + brand
+					+ ", description=" + description + ", unitType=" + unitType + ", unitValue=" + unitValue
+					+ ", price=" + price + ", cost=" + cost + ", totalQuantity=" + totalQuantity + ", image="
+					+ Arrays.toString(image) + "]";
+		} 
+	    
+	    
+
 }
