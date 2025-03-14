@@ -19,6 +19,7 @@ public class ProjectSecurityConfig {
                 .requestMatchers("/home","/").permitAll()
                 .requestMatchers("/main/**").permitAll()
                 .requestMatchers("/login").permitAll()
+                .requestMatchers("/logout").permitAll()
                 .requestMatchers("/retailshop/**").permitAll()
                 .requestMatchers("/dashboard/**").authenticated()
                 .requestMatchers("/products/**").authenticated()
@@ -30,14 +31,8 @@ public class ProjectSecurityConfig {
                 .failureUrl("/login?error=true")
                 .permitAll()
             )
-            .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/login?logout=true")
-                .invalidateHttpSession(true)
-                .permitAll()
-            )
             .httpBasic(Customizer.withDefaults())
-            .csrf(csrf -> csrf.disable());
+            .csrf(Customizer.withDefaults());
         return httpSecurity.build();
     }
 	
