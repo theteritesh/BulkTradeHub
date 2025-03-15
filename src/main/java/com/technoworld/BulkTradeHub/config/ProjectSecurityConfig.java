@@ -4,11 +4,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -20,8 +17,9 @@ public class ProjectSecurityConfig {
                 .requestMatchers("/main/**").permitAll()
                 .requestMatchers("/login").permitAll()
                 .requestMatchers("/logout").permitAll()
+                .requestMatchers("/registration").permitAll()
                 .requestMatchers("/retailshop/**").permitAll()
-                .requestMatchers("/dashboard/**").authenticated()
+                .requestMatchers("/dashboard/**").hasRole("RETAIL")
                 .requestMatchers("/products/**").authenticated()
             )
             
@@ -36,25 +34,10 @@ public class ProjectSecurityConfig {
         return httpSecurity.build();
     }
 	
-	@Bean
-	InMemoryUserDetailsManager userDetailsService() {
-		UserDetails admin= User.builder()
-				.username("admin")
-				.password(passwordEncoder().encode("1234"))
-				.roles("ADMIN","RETAIL")
-				.build();
-		
-		UserDetails retail= User.builder()
-				.username("retail")
-				.password(passwordEncoder().encode("1234"))
-				.roles("RETAIL")
-				.build();
-		
-		return new InMemoryUserDetailsManager(admin,retail);
-	}
+	
 
     @Bean
     PasswordEncoder passwordEncoder() {
-    	return new BCryptPasswordEncoder(); // Secure password hashing
+    	return new BCryptPasswordEncoder(); 
     }
 }
