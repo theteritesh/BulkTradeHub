@@ -1,9 +1,11 @@
 package com.technoworld.BulkTradeHub.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 
 @Entity
 public class User {
@@ -15,6 +17,9 @@ public class User {
 	private String email;
 	private String password;
 	private String roles;
+	
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Profile profile;
 	
 	public int getId() {
 		return id;
@@ -47,12 +52,16 @@ public class User {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	
+	public Profile getProfile() {
+		return profile;
+	}
+	public void setProfile(Profile profile) {
+		this.profile = profile;
+	}
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + ", roles=" + roles
-				+ "]";
+				+ ", profile=" + profile + "]";
 	}
-	
 	
 }

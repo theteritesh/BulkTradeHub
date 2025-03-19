@@ -6,6 +6,6 @@ import com.technoworld.BulkTradeHub.entity.User;
 
 public interface UserRepository extends JpaRepository<User, Integer>{
 
-	User readByEmail(String email);
+	User findByEmail(String email);
 
 }

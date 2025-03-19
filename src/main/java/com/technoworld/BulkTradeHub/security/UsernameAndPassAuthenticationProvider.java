@@ -30,9 +30,9 @@ public class UsernameAndPassAuthenticationProvider implements AuthenticationProv
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		String email=authentication.getName();
 		String password=authentication.getCredentials().toString();
-		User user=userRepository.readByEmail(email);
+		User user=userRepository.findByEmail(email);
 		if(user !=null && user.getId()>0 && passwordEncoder.matches(password, user.getPassword())) {
-			return new UsernamePasswordAuthenticationToken(user.getName(), password,getGrantedAuthorities(user.getRoles()));
+			return new UsernamePasswordAuthenticationToken(user, password,getGrantedAuthorities(user.getRoles()));
 		}else {
 			throw new BadCredentialsException("Invalid credentials");
 		}
