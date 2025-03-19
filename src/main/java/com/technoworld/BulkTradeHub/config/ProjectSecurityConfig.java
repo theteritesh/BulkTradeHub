@@ -20,6 +20,7 @@ public class ProjectSecurityConfig {
                 .requestMatchers("/registration").permitAll()
                 .requestMatchers("/retailshop/**").permitAll()
                 .requestMatchers("/dashboard/**").hasRole("RETAIL")
+                .requestMatchers("/retail/**").hasRole("RETAIL")
                 .requestMatchers("/products/**").authenticated()
             )
             
