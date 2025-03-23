@@ -2,6 +2,8 @@ package com.technoworld.BulkTradeHub.retailshop.entity;
 
 import java.util.Arrays;
 
+import com.technoworld.BulkTradeHub.entity.User;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -27,9 +29,35 @@ public class Product {
 	    private Double cost;
 	    private int totalQuantity;
 	    
+	    @ManyToOne
+	    @JoinColumn(name = "user_id", nullable = false)
+	    private User user;
+	    
 	    @Lob
 	    @Column(columnDefinition = "LONGBLOB") 
-	    private byte[] image;
+	    private byte[] mainImage;
+	    
+	    @Lob
+	    @Column(columnDefinition = "LONGBLOB") 
+	    private byte[] firstImage;
+	    
+	    @Lob
+	    @Column(columnDefinition = "LONGBLOB") 
+	    private byte[] secondImage;
+	    
+	    @Lob
+	    @Column(columnDefinition = "LONGBLOB") 
+	    private byte[] thirdImage;
+	    
+	    @Lob
+	    @Column(columnDefinition = "LONGBLOB") 
+	    private byte[] fourthImage;
+	    
+	    @Lob
+	    @Column(columnDefinition = "LONGBLOB") 
+	    private byte[] fifthImage;
+	    
+	    
 
 		public Long getId() {
 			return id;
@@ -111,22 +139,71 @@ public class Product {
 			this.totalQuantity = totalQuantity;
 		}
 
-		public byte[] getImage() {
-			return image;
+		public User getUser() {
+			return user;
 		}
 
-		public void setImage(byte[] image) {
-			this.image = image;
+		public void setUser(User user) {
+			this.user = user;
+		}
+
+		public byte[] getMainImage() {
+			return mainImage;
+		}
+
+		public void setMainImage(byte[] mainImage) {
+			this.mainImage = mainImage;
+		}
+
+		public byte[] getFirstImage() {
+			return firstImage;
+		}
+
+		public void setFirstImage(byte[] firstImage) {
+			this.firstImage = firstImage;
+		}
+
+		public byte[] getSecondImage() {
+			return secondImage;
+		}
+
+		public void setSecondImage(byte[] secondImage) {
+			this.secondImage = secondImage;
+		}
+
+		public byte[] getThirdImage() {
+			return thirdImage;
+		}
+
+		public void setThirdImage(byte[] thirdImage) {
+			this.thirdImage = thirdImage;
+		}
+
+		public byte[] getFourthImage() {
+			return fourthImage;
+		}
+
+		public void setFourthImage(byte[] fourthImage) {
+			this.fourthImage = fourthImage;
+		}
+
+		public byte[] getFifthImage() {
+			return fifthImage;
+		}
+
+		public void setFifthImage(byte[] fifthImage) {
+			this.fifthImage = fifthImage;
 		}
 
 		@Override
 		public String toString() {
 			return "Product [id=" + id + ", name=" + name + ", category=" + category + ", brand=" + brand
 					+ ", description=" + description + ", unitType=" + unitType + ", unitValue=" + unitValue
-					+ ", price=" + price + ", cost=" + cost + ", totalQuantity=" + totalQuantity + ", image="
-					+ Arrays.toString(image) + "]";
-		} 
-	    
-	    
+					+ ", price=" + price + ", cost=" + cost + ", totalQuantity=" + totalQuantity + ", user=" + user
+					+ ", mainImage=" + Arrays.toString(mainImage) + ", firstImage=" + Arrays.toString(firstImage)
+					+ ", secondImage=" + Arrays.toString(secondImage) + ", thirdImage=" + Arrays.toString(thirdImage)
+					+ ", fourthImage=" + Arrays.toString(fourthImage) + ", fifthImage=" + Arrays.toString(fifthImage)
+					+ "]";
+		}
 
 }

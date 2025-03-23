@@ -1,12 +1,16 @@
 package com.technoworld.BulkTradeHub.retailshop.controller;
 
+import java.security.Principal;
 import java.util.List;
+
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.technoworld.BulkTradeHub.entity.User;
 import com.technoworld.BulkTradeHub.retailshop.entity.Product;
 import com.technoworld.BulkTradeHub.retailshop.service.ProductService;
 
@@ -35,8 +39,9 @@ public class DashboardController {
 	}
 	
 	@GetMapping("/showProducts")
-    public String displayProducts(Model model,@ModelAttribute("successMessage") String successMessage) {
-        List<Product> productList = productService.getAllProducts();
+    public String displayProducts(Model model,@ModelAttribute("successMessage") String successMessage,Principal principal) {
+		User user =  (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+        List<Product> productList = productService.getAllProducts(user);
         model.addAttribute("successMessage", successMessage);
         model.addAttribute("products", productList);
         return "/retailshop/showProduct";
