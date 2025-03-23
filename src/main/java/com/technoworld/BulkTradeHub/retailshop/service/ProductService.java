@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.technoworld.BulkTradeHub.entity.User;
 import com.technoworld.BulkTradeHub.retailshop.entity.Product;
 import com.technoworld.BulkTradeHub.retailshop.repository.ProductRepository;
 
@@ -22,8 +23,8 @@ public class ProductService {
         productRepository.save(product);
     }   
     
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public List<Product> getAllProducts(User user) {
+        return productRepository.findByUserOrderByIdDesc(user);
     }
     
     public Product getProductById(Long id) {
@@ -34,7 +35,7 @@ public class ProductService {
         productRepository.deleteById(id);
     }
     
-    public List<Product> searchProducts(String query) {
-        return productRepository.searchProducts(query);
+    public List<Product> searchProducts(String query,int userId) {
+        return productRepository.searchProductsByUser(query,userId);
     }
 }
