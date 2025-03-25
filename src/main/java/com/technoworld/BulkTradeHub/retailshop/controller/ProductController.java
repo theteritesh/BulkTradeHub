@@ -2,18 +2,25 @@ package com.technoworld.BulkTradeHub.retailshop.controller;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.*;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.technoworld.BulkTradeHub.entity.User;
 import com.technoworld.BulkTradeHub.retailshop.entity.Product;
 import com.technoworld.BulkTradeHub.retailshop.service.ProductService;
@@ -23,6 +30,8 @@ import com.technoworld.BulkTradeHub.retailshop.service.ProductService;
 public class ProductController {
 
     private final ProductService productService;
+    private static final String API_KEY = "uw3z06j249lqnhx3heay8x7gmb9p67";
+    private static final String API_URL = "https://api.barcodelookup.com/v3/products";
 
     public ProductController(ProductService productService) {
         this.productService = productService;
@@ -44,6 +53,10 @@ public class ProductController {
     		@RequestParam("thirdImage") MultipartFile thirdImage,
     		@RequestParam("fourthImage") MultipartFile fourthImage,
     		@RequestParam("fifthImage") MultipartFile fifthImage,
+    		@RequestParam String gTin,
+    		@RequestParam String warranty,
+    		@RequestParam LocalDate expiryDate,
+    		
     		RedirectAttributes redirectAttributes,
     		Principal principal) {
     	
@@ -59,13 +72,43 @@ public class ProductController {
 	    	product.setPrice(price);
 	    	product.setCost(cost);
 	    	product.setTotalQuantity(totalQuantity);
-	    	product.setMainImage(mainImage.getBytes());
-	    	product.setFirstImage(firstImage.getBytes());
-	    	product.setSecondImage(secondImage.getBytes());
-	    	product.setThirdImage(thirdImage.getBytes());
-	    	product.setFourthImage(fourthImage.getBytes());
-	    	product.setFifthImage(fifthImage.getBytes());
+	    	
+	    	if(mainImage != null) {
+	    		product.setMainImage(mainImage.getBytes());
+	    	}else {
+	    		product.setMainImage(null);
+	    	}
+	    	
+	    	if(firstImage != null) {
+	    		product.setFirstImage(firstImage.getBytes());
+	    	}else {
+	    		product.setFirstImage(null);
+	    	}
+	    	if(secondImage != null) {
+	    		product.setSecondImage(secondImage.getBytes());
+	    	}else {
+	    		product.setSecondImage(null);
+	    	}
+	    	if(thirdImage != null) {
+	    		product.setThirdImage(thirdImage.getBytes());
+	    	}else {
+	    		product.setThirdImage(null);
+	    	}
+	    	if(fourthImage != null) {
+	    		product.setFourthImage(fourthImage.getBytes());
+	    	}else {
+	    		product.setFourthImage(null);
+	    	}
+	    	if(fifthImage != null) {
+	    		product.setFifthImage(fifthImage.getBytes());
+	    	}else {
+	    		product.setFifthImage(null);
+	    	}
+	    	
 	    	product.setUser(user);
+	    	product.setExpiryDate(expiryDate);
+	    	product.setWarranty(warranty);
+	    	product.setgTin(gTin);
 	    	
 	        productService.saveProduct(product);
 	        redirectAttributes.addFlashAttribute("successMessage", "Product added successfully!");
@@ -148,6 +191,8 @@ public class ProductController {
                         		@RequestParam("thirdImage") MultipartFile thirdImage,
                         		@RequestParam("fourthImage") MultipartFile fourthImage,
                         		@RequestParam("fifthImage") MultipartFile fifthImage,
+                        		@RequestParam String warranty,
+                        		@RequestParam LocalDate expiryDate,
                                 RedirectAttributes redirectAttributes) {
         try {
             Product existingProduct = productService.getProductById(id);
@@ -166,6 +211,8 @@ public class ProductController {
             existingProduct.setPrice(price);
             existingProduct.setCost(cost);
             existingProduct.setTotalQuantity(totalQuantity);
+            existingProduct.setWarranty(warranty);
+            existingProduct.setExpiryDate(expiryDate);
 
             // Update image only if a new file is uploaded
             if (mainImage != null && !mainImage.isEmpty()) {
@@ -204,8 +251,48 @@ public class ProductController {
     	User user =  (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
         List<Product> filteredProducts = productService.searchProducts(query,user.getId());
         model.addAttribute("products", filteredProducts);
-        model.addAttribute("query", query); // Keep the search term in input field
+        model.addAttribute("query", query);
         return "/retailshop/showProduct"; // Ensure the correct Thymeleaf template is used
     }
+    
+    @GetMapping("/verifyGtin")
+    public ResponseEntity<Map<String, Object>> checkProduct(@RequestParam(required = false) String gtin) {
+        Map<String, Object> responseMap = new HashMap<>();
 
+        if (gtin == null || gtin.isEmpty()) {
+            responseMap.put("valid", false);
+            responseMap.put("message", "GTIN cannot be empty.");
+            return ResponseEntity.badRequest().body(responseMap);
+        }
+
+        String url = API_URL + "?formatted=y&key=" + API_KEY + "&barcode=" + gtin;
+        RestTemplate restTemplate = new RestTemplate();
+
+        try {
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+            
+            // Use Jackson to parse JSON response
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode root = objectMapper.readTree(response.getBody());
+
+            // Check if products exist in the response
+            if (root.has("products") && root.get("products").isArray() && root.get("products").size() > 0) {
+                JsonNode product = root.get("products").get(0); // First product in the list
+                responseMap.put("valid", true);
+                responseMap.put("product_name", product.has("product_name") ? product.get("product_name").asText() : "Unknown Product");
+                responseMap.put("brand", product.has("brand") ? product.get("brand").asText() : "Unknown Brand");
+                responseMap.put("category", product.has("category") ? product.get("category").asText() : "Unknown Category");
+                responseMap.put("description", product.has("description")?product.get("description").asText():"");
+            } else {
+                responseMap.put("valid", false);
+                responseMap.put("message", "Invalid GTIN. No product found.");
+            }
+
+            return ResponseEntity.ok(responseMap);
+        } catch (Exception e) {
+            responseMap.put("valid", false);
+            responseMap.put("message", "Error verifying GTIN: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseMap);
+        }
+    }
 }
