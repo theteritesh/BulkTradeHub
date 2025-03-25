@@ -1,5 +1,6 @@
 package com.technoworld.BulkTradeHub.retailshop.entity;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 
 import com.technoworld.BulkTradeHub.entity.User;
@@ -28,6 +29,7 @@ public class Product {
 	    private Double price;
 	    private Double cost;
 	    private int totalQuantity;
+	    private String gTin;
 	    
 	    @ManyToOne
 	    @JoinColumn(name = "user_id", nullable = false)
@@ -56,6 +58,9 @@ public class Product {
 	    @Lob
 	    @Column(columnDefinition = "LONGBLOB") 
 	    private byte[] fifthImage;
+	    
+	    private String warranty;
+	    private LocalDate expiryDate;
 	    
 	    
 
@@ -195,15 +200,38 @@ public class Product {
 			this.fifthImage = fifthImage;
 		}
 
+		public String getgTin() {
+			return gTin;
+		}
+
+		public void setgTin(String gTin) {
+			this.gTin = gTin;
+		}
+		
+		public String getWarranty() {
+			return warranty;
+		}
+
+		public void setWarranty(String warranty) {
+			this.warranty = warranty;
+		}
+
+		public LocalDate getExpiryDate() {
+			return expiryDate;
+		}
+
+		public void setExpiryDate(LocalDate expiryDate) {
+			this.expiryDate = expiryDate;
+		}
+
 		@Override
 		public String toString() {
 			return "Product [id=" + id + ", name=" + name + ", category=" + category + ", brand=" + brand
 					+ ", description=" + description + ", unitType=" + unitType + ", unitValue=" + unitValue
-					+ ", price=" + price + ", cost=" + cost + ", totalQuantity=" + totalQuantity + ", user=" + user
-					+ ", mainImage=" + Arrays.toString(mainImage) + ", firstImage=" + Arrays.toString(firstImage)
-					+ ", secondImage=" + Arrays.toString(secondImage) + ", thirdImage=" + Arrays.toString(thirdImage)
-					+ ", fourthImage=" + Arrays.toString(fourthImage) + ", fifthImage=" + Arrays.toString(fifthImage)
-					+ "]";
+					+ ", price=" + price + ", cost=" + cost + ", totalQuantity=" + totalQuantity + ", gTin=" + gTin
+					+ ", user=" + user + ", mainImage=" + Arrays.toString(mainImage) + ", firstImage="
+					+ Arrays.toString(firstImage) + ", secondImage=" + Arrays.toString(secondImage) + ", thirdImage="
+					+ Arrays.toString(thirdImage) + ", fourthImage=" + Arrays.toString(fourthImage) + ", fifthImage="
+					+ Arrays.toString(fifthImage) + ", warranty=" + warranty + ", expiryDate=" + expiryDate + "]";
 		}
-
 }

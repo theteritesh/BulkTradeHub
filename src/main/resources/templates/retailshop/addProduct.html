@@ -16,8 +16,7 @@
 			}
 
 			.card {
-				max-width: 600px;
-				width: 100%;
+				width: 90%;
 				border-radius: 12px;
 				box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
 				background: white;
@@ -115,9 +114,20 @@
 									accept="image/*" onchange="previewFile(6)">
 							</div>
 						</div>
+						<!--GTIN-->
+
+						<div class="col-6 form-floating">
+							<input type="text" class="form-control" id="gtin" th:field="*{gTin}" name="gtin" required>
+							<label for="gtin">GTIN</label>
+						</div>
+						<div class="col-6">
+							<button type="button" class="btn-lg btn-primary" id="verifyGtinBtn">Verify</button>
+						</div>
+						<small id="gtinStatus" class="text-muted"></small>
+
 
 						<!-- Name -->
-						<div class="col-12 form-floating">
+						<div class="col-6 form-floating">
 							<input type="text" class="form-control" id="productName" th:field="*{name}"
 								placeholder="Product Name">
 							<label for="productName">Product Name</label>
@@ -136,6 +146,11 @@
 								placeholder="Brand">
 							<label for="productBrand">Brand</label>
 						</div>
+						<div class="col-md-6 form-floating">
+							<input type="text" class="form-control" id="warranty" th:field="*{warranty}"
+															placeholder="Brand">
+							<label for="warranty">Warranty in Months</label>
+						</div>
 
 						<!-- Description -->
 						<div class="col-12 form-floating">
@@ -145,7 +160,7 @@
 						</div>
 
 						<!-- Unit Type -->
-						<div class="col-md-6 form-floating">
+						<div class="col-md-4 form-floating">
 							<select class="form-select" id="unitType" th:field="*{unitType}">
 								<option value="" disabled selected>Select Unit Type</option>
 								<option value="pcs">Pieces</option>
@@ -158,10 +173,16 @@
 						</div>
 
 						<!-- Unit Value -->
-						<div class="col-md-6 form-floating">
+						<div class="col-md-4 form-floating">
 							<input type="number" class="form-control" id="unitValue" th:field="*{unitValue}"
 								placeholder="Unit Value">
 							<label for="unitValue">Unit Value</label>
+						</div>
+
+						<div class="col-md-4 form-floating">
+							<input type="date" class="form-control" th:field="*{expiryDate}" id="expiryDate"
+								name="expiryDate">
+							<label for="expiryDate" class="form-control">Expiry Date</label>
 						</div>
 
 						<!-- Price -->
@@ -208,6 +229,34 @@
 					reader.readAsDataURL(fileInput.files[0]);
 				}
 			}
+
+			// GTIN Verification
+			document.getElementById('verifyGtinBtn').addEventListener('click', function () {
+				var gtin = document.getElementById('gtin').value;
+				if (!gtin) {
+					alert("Please enter a GTIN number.");
+					return;
+				}
+
+				fetch('/products/verifyGtin?gtin=' + gtin)
+					.then(response => response.json())
+					.then(data => {
+						console.log(data);
+						var statusElement = document.getElementById('gtinStatus');
+						if (data.valid) {
+							statusElement.textContent = "GTIN Verified ✅";
+							statusElement.classList.add("text-success");
+							document.getElementById("productBrand").value = data.brand;
+							document.getElementById("productCategory").value = data.category;
+							document.getElementById("productName").value = data.product_name !== "Unknown Product" ? data.product_name : "";
+							document.getElementById("productDescription").value = data.description !== "Unknown Product" ? data.description : "";
+						} else {
+							statusElement.textContent = "Invalid GTIN ❌";
+							statusElement.classList.add("text-danger");
+						}
+					})
+					.catch(error => console.error('Error:', error));
+			});
 		</script>
 	</section>
 </body>
