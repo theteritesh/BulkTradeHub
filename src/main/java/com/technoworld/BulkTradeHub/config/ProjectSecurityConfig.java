@@ -14,10 +14,12 @@ public class ProjectSecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(auth -> auth
                 .requestMatchers("/home","/").permitAll()
+                .requestMatchers("/admin/**").permitAll()            
                 .requestMatchers("/main/**").permitAll()
                 .requestMatchers("/login").permitAll()
                 .requestMatchers("/logout").permitAll()
                 .requestMatchers("/registration").permitAll()
+                    
                 .requestMatchers("/retailshop/**").permitAll()
                 .requestMatchers("/dashboard/**").hasRole("RETAIL")
                 .requestMatchers("/retail/**").hasRole("RETAIL")
