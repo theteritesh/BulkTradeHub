@@ -1,9 +1,7 @@
-package com.technoworld.BulkTradeHub.retailshop.entity;
+package com.technoworld.BulkTradeHub.entity;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import com.technoworld.BulkTradeHub.entity.Profile;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

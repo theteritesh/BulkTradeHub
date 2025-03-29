@@ -21,7 +21,7 @@ public class ProjectSecurityConfig {
                 .requestMatchers("/retailshop/**").permitAll()
                 .requestMatchers("/dashboard/**").hasRole("RETAIL")
                 .requestMatchers("/retail/**").hasRole("RETAIL")
-                .requestMatchers("/products/**").authenticated()
+                .requestMatchers("/products/**").hasRole("RETAIL")
             )
             
         	.formLogin(form -> form

@@ -1,16 +1,18 @@
-package com.technoworld.BulkTradeHub.retailshop.repository;
+package com.technoworld.BulkTradeHub.repository;
 
 
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.technoworld.BulkTradeHub.entity.Product;
+import com.technoworld.BulkTradeHub.entity.ProductPost;
 import com.technoworld.BulkTradeHub.entity.User;
-import com.technoworld.BulkTradeHub.retailshop.entity.Product;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
@@ -24,6 +26,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 		List<Product> searchProductsByUser(@Param("query") String query, @Param("userId") int userId);
 	
 	List<Product> findByUserOrderByIdDesc(User user);
+	
+	@Query("SELECT p FROM Product p WHERE p.id = :id AND p.user.id = :userId")
+    Optional<Product> findByIdAndUser(Long id, int userId);
+
+	Product findFirstByUserOrderByIdAsc(User user);
 
 	
 		

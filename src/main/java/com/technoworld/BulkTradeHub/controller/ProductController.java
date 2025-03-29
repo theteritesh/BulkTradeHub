@@ -1,12 +1,15 @@
-package com.technoworld.BulkTradeHub.retailshop.controller;
+package com.technoworld.BulkTradeHub.controller;
 
 import java.io.IOException;
 import java.security.Principal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +24,12 @@ import org.springframework.web.bind.annotation.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.technoworld.BulkTradeHub.entity.Product;
+import com.technoworld.BulkTradeHub.entity.ProductPost;
 import com.technoworld.BulkTradeHub.entity.User;
-import com.technoworld.BulkTradeHub.retailshop.entity.Product;
-import com.technoworld.BulkTradeHub.retailshop.service.ProductService;
+import com.technoworld.BulkTradeHub.repository.ProductPostRepository;
+import com.technoworld.BulkTradeHub.repository.ProductRepository;
+import com.technoworld.BulkTradeHub.service.ProductService;
 
 @Controller
 @RequestMapping("/products")
@@ -32,6 +38,12 @@ public class ProductController {
     private final ProductService productService;
     private static final String API_KEY = "uw3z06j249lqnhx3heay8x7gmb9p67";
     private static final String API_URL = "https://api.barcodelookup.com/v3/products";
+    
+    @Autowired
+    private ProductRepository productRepository;
+    
+    @Autowired
+    private ProductPostRepository productPostRepository;
 
     public ProductController(ProductService productService) {
         this.productService = productService;
@@ -295,4 +307,96 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseMap);
         }
     }
+    
+    @GetMapping("/searchProduct")
+    public String searchProductForPost(@RequestParam(value = "productId", required = false) Long productId, Model model,
+    		Principal principal) {
+    	User user =  (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+        ProductPost productPost = new ProductPost();
+
+        if (productId != null) {
+            Optional<Product> productOptional = productRepository.findByIdAndUser(productId,user.getId());
+            if (productOptional.isPresent()) {
+                Product product = productOptional.get();
+                productPost.setProductName(product.getName());
+                productPost.setCategory(product.getCategory());
+                productPost.setBrand(product.getBrand());
+                productPost.setDescription(product.getDescription());
+                productPost.setRetailPrice(product.getPrice());
+                productPost.setAvailableQuantity(product.getTotalQuantity());
+                productPost.setWholesalePrice(product.getPrice());
+    	        productPost.setProductId(product.getId());
+
+                model.addAttribute("productId", product.getId());
+            } else {
+                model.addAttribute("errorMessage", "Product not found. Please add a product first.");
+            }
+        } else {
+            model.addAttribute("errorMessage", "Please enter a Product ID to search.");
+        }
+
+        model.addAttribute("PostProduct", productPost); 
+
+        return "/retailshop/postProduct";
+    }
+    
+    
+    @PostMapping("/postProductPost")
+    public String postProductPost(
+        @RequestParam("productId") Long productId, 
+        @RequestParam("description") String description,
+        @RequestParam("minOrderQuantity") int minOrderQuantity,
+        @RequestParam("bulkPackageType") String bulkPackageType,
+        @RequestParam("wholesalePrice") double wholesalePrice,
+        @RequestParam("bulkDiscount") double bulkDiscount,
+        @RequestParam("deliveryTime") String deliveryTime,
+        @RequestParam("shippingCost") double shippingCost,
+        @RequestParam("availabilityType") String availabilityType,
+        @RequestParam("leadTime") String leadTime,
+        @RequestParam(value = "codAvailable", required = false) Boolean codAvailable,
+        RedirectAttributes redirectAttributes,Principal principal) {
+    	User user =  (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+        // Find the Product by ID
+        Optional<Product> productOptional = productRepository.findById(productId);
+
+        if (productOptional.isPresent()) {
+            Product product = productOptional.get();
+
+            // Create a new ProductPost using the Product details
+            ProductPost productPost = new ProductPost();
+            productPost.setProductId(product.getId());
+            productPost.setProductName(product.getName());
+            productPost.setCategory(product.getCategory());
+            productPost.setBrand(product.getBrand());
+            productPost.setDescription(description);
+            productPost.setRetailPrice(product.getPrice());
+            productPost.setMinOrderQuantity(minOrderQuantity);
+            productPost.setBulkPackageType(bulkPackageType);
+            productPost.setWholesalePrice(wholesalePrice);
+            productPost.setBulkDiscount(bulkDiscount);
+            productPost.setDeliveryTime(deliveryTime);
+            productPost.setShippingCost(shippingCost);
+            productPost.setAvailabilityType(availabilityType);
+            productPost.setLeadTime(leadTime);
+            productPost.setCodAvailable(codAvailable != null ? codAvailable : false);
+            productPost.setPostedAt(LocalDateTime.now());
+            productPost.setAvailableQuantity(product.getTotalQuantity());
+            productPost.setUser(user);
+
+            // Save ProductPost
+            productPostRepository.save(productPost);
+
+            // Success message
+            redirectAttributes.addFlashAttribute("successMessage", "Product posted successfully!");
+            redirectAttributes.addFlashAttribute("productId", product.getId());
+        } else {
+            // If product not found
+            redirectAttributes.addFlashAttribute("errorMessage", "Product not found. Please try again.");
+        }
+
+        return "redirect:/products/searchProduct?productId=" + productId;
+    }
+
+
+
 }

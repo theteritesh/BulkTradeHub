@@ -1,9 +1,9 @@
-package com.technoworld.BulkTradeHub.retailshop.entity;
+package com.technoworld.BulkTradeHub.entity;
 
 import java.time.LocalDate;
 import java.util.Arrays;
 
-import com.technoworld.BulkTradeHub.entity.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
 
@@ -31,30 +31,37 @@ public class Product {
 	    private int totalQuantity;
 	    private String gTin;
 	    
+	    @JsonIgnore
 	    @ManyToOne
 	    @JoinColumn(name = "user_id", nullable = false)
 	    private User user;
 	    
+	    @JsonIgnore
 	    @Lob
 	    @Column(columnDefinition = "LONGBLOB") 
 	    private byte[] mainImage;
 	    
+	    @JsonIgnore
 	    @Lob
 	    @Column(columnDefinition = "LONGBLOB") 
 	    private byte[] firstImage;
 	    
+	    @JsonIgnore
 	    @Lob
 	    @Column(columnDefinition = "LONGBLOB") 
 	    private byte[] secondImage;
 	    
+	    @JsonIgnore
 	    @Lob
 	    @Column(columnDefinition = "LONGBLOB") 
 	    private byte[] thirdImage;
 	    
+	    @JsonIgnore
 	    @Lob
 	    @Column(columnDefinition = "LONGBLOB") 
 	    private byte[] fourthImage;
 	    
+	    @JsonIgnore
 	    @Lob
 	    @Column(columnDefinition = "LONGBLOB") 
 	    private byte[] fifthImage;
