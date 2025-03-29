@@ -1,10 +1,10 @@
-package com.technoworld.BulkTradeHub.retailshop.service;
+package com.technoworld.BulkTradeHub.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.technoworld.BulkTradeHub.retailshop.entity.RetailShopProfile;
-import com.technoworld.BulkTradeHub.retailshop.repository.RetailShopProfileRepository;
+import com.technoworld.BulkTradeHub.entity.RetailShopProfile;
+import com.technoworld.BulkTradeHub.repository.RetailShopProfileRepository;
 
 @Service
 public class RetailShopProfileService {

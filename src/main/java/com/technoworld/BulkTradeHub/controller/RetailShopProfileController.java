@@ -1,4 +1,4 @@
-package com.technoworld.BulkTradeHub.retailshop.controller;
+package com.technoworld.BulkTradeHub.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,10 +18,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.technoworld.BulkTradeHub.entity.RetailShopProfile;
 import com.technoworld.BulkTradeHub.entity.User;
 import com.technoworld.BulkTradeHub.repository.ProfileRepository;
-import com.technoworld.BulkTradeHub.retailshop.entity.RetailShopProfile;
-import com.technoworld.BulkTradeHub.retailshop.service.RetailShopProfileService;
+import com.technoworld.BulkTradeHub.service.RetailShopProfileService;
 
 @Controller
 @RequestMapping("/retail")

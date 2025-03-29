@@ -1,13 +1,13 @@
-package com.technoworld.BulkTradeHub.retailshop.service;
+package com.technoworld.BulkTradeHub.service;
 
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.technoworld.BulkTradeHub.entity.Product;
 import com.technoworld.BulkTradeHub.entity.User;
-import com.technoworld.BulkTradeHub.retailshop.entity.Product;
-import com.technoworld.BulkTradeHub.retailshop.repository.ProductRepository;
+import com.technoworld.BulkTradeHub.repository.ProductRepository;
 
 @Service
 public class ProductService {
