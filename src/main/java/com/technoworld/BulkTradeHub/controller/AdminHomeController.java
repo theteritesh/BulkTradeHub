@@ -9,11 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.technoworld.BulkTradeHub.entity.Profile;
+import com.technoworld.BulkTradeHub.entity.RetailShopProfile;
 import com.technoworld.BulkTradeHub.entity.User;
 import com.technoworld.BulkTradeHub.repository.UserRepository;
-import com.technoworld.BulkTradeHub.retailshop.entity.RetailShopProfile;
-import com.technoworld.BulkTradeHub.retailshop.repository.ProductRepository;
-import com.technoworld.BulkTradeHub.retailshop.repository.RetailShopProfileRepository;
 import com.technoworld.BulkTradeHub.service.AdminServiceImplementation;
 
 @Controller
@@ -35,9 +33,8 @@ private AdminServiceImplementation sr;
 	}
 	
 	@GetMapping("/getAllUserData")
-	public String userData(Model model) {		
-		List<User> user=sr.getAllUser();
-		
+	public String getAllUserData(Model model) {		
+		List<User> user=sr.getAllUser();		
 		System.out.println(user);
 		model.addAttribute("userData", user);
 		return "admin/UserData";
@@ -51,7 +48,7 @@ private AdminServiceImplementation sr;
 	}
 
 	/*
-	 * @GetMapping("/getAllSealsMan") public String sealsManData() {
+	 * @GetMapping("/getAllSalesman") public String salesmanData() {
 	 * 
 	 * List<> sealsmanData=sr.getAllSalesmanData(); return
 	 * "admin/SealsManManagement"; }

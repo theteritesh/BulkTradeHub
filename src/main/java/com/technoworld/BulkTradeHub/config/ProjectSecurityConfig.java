@@ -19,7 +19,6 @@ public class ProjectSecurityConfig {
                 .requestMatchers("/login").permitAll()
                 .requestMatchers("/logout").permitAll()
                 .requestMatchers("/registration").permitAll()
-                    
                 .requestMatchers("/retailshop/**").permitAll()
                 .requestMatchers("/dashboard/**").hasRole("RETAIL")
                 .requestMatchers("/retail/**").hasRole("RETAIL")
@@ -38,7 +37,6 @@ public class ProjectSecurityConfig {
     }
 	
 	
-
     @Bean
     PasswordEncoder passwordEncoder() {
     	return new BCryptPasswordEncoder(); 

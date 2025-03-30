@@ -12,10 +12,4 @@ import com.technoworld.BulkTradeHub.entity.User;
 public interface UserRepository extends JpaRepository<User, Integer>{
 
 	User findByEmail(String email);
-	
-	@Query("SELECT u FROM User u LEFT JOIN FETCH u.profile")
-	List<User> findAllWithProfile();
-
-
-
 }

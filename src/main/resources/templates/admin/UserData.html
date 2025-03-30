@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UserManagement- BulkThreadHub</title>
+    <title>User Management - BulkThreadHub</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="styles.css">
@@ -49,13 +49,13 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold" th:href="@{/admin/getAllUserData}">User Management</a>
+            <a class="navbar-brand fw-bold" th:href="@{/admin/getAllRetailer}">User Management</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" th:href="@{/admin/dashboard}">Home</a></li>
+                  <!--   <li class="nav-item"><a class="nav-link" th:href="{/admin/dashboard}">Home</a></li> -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Profile</a>
                         <ul class="dropdown-menu dropdown-menu-end">
@@ -73,9 +73,9 @@
         <div class="bg-dark text-white p-3 min-vh-100" id="sidebar">
             <h5 class="text-uppercase">Core</h5>
             <ul class="nav flex-column">
-                <br>
-                <li class="nav-item"><a class="nav-link text-white" th:href="@{/admin/getAllRetailer}"><i class="bi bi-people"></i> Retailers Management</a></li>
-                <li class="nav-item"><a class="nav-link text-white" th:href="@{/admin/getAllSealsMan}"><i class="bi bi-people"></i> Sealsman Management</a></li>
+               <br>
+                <li class="nav-item"><a class="nav-link text-white" th:href="@{admin/getAllRetailer}"><i class="bi bi-people"></i> Retailer Management</a></li>
+                <li class="nav-item"><a class="nav-link text-white"th:href="@{/admin/getAllSalesman}"><i class="bi bi-people"></i> Salesman Management</a></li>
                 <li class="nav-item"><a class="nav-link text-white" href="#"><i class="bi bi-people"></i> Other</a></li>
 
             </ul>
@@ -90,36 +90,33 @@
             </div>
             
             <div class="table-responsive">
-                <table class="table table-bordered table-hover">
-					<thead class="table-dark">
-						   <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Address</th>
-                <th>City</th>
-                <th>State</th>
-                <th>Country</th>
-                <th>Phone Number</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="user : ${users}">
-                <td th:text="${user.id}"></td>
-                <td th:text="${user.name}"></td>
-                <td th:text="${user.email}"></td>
-                <td th:text="${user.address}"></td>
-                <td th:text="${user.profile.city}"></td>
-                <td th:text="${user.profile.state}"></td>
-                <td th:text="${user.profile.country}"></td>
-                <td th:text="${user.profile.phoneNumber}"></td>
-            </tr>
-					</tbody>
-				</table>
+              <table class="table table-bordered table-hover">
+   				<thead class="table-dark">
+					<tr>
+						<th>ID</th>
+						<th>Name</th>
+						<th>Email</th>
+						<th>Password</th>
+						<th>Role</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="user : ${users}">
+						<td th:text="${user.id}"></td>
+						<td th:text="${user.name}"></td>
+						<td th:text="${user.email}"></td>
+						<td th:text="${user.password}"></td>
+						<td th:text="${user.roles}"></td>
+						<td>
+						    <a href="#" class="btn btn-sm btn-info">Edit</a>
+                            <a href="#" class="btn btn-sm btn-danger">Delete</a>
+						</td>
+					</tr>
+				</tbody>
+                </table>
             </div>
         </div>
-        
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
