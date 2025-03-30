@@ -30,7 +30,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	@Query("SELECT p FROM Product p WHERE p.id = :id AND p.user.id = :userId")
     Optional<Product> findByIdAndUser(Long id, int userId);
 
-	Product findFirstByUserOrderByIdAsc(User user);
+	Product findFirstByUserOrderByIdDesc(User user);
 
 	
 		

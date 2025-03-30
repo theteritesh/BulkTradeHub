@@ -37,7 +37,7 @@
 					</div>
 			    </div>
 			</form>
-				<form th:action="@{/products/postProductPost}" th:object="${PostProduct}" method="post">
+				<form th:action="@{/products/postProductPost}" th:object="${PostProduct}" id="postProductForm" method="post">
 					<fieldset th:disabled="${errorMessage}">
 					<input th:field="*{productId}" id="productId" type="text" class="form-control" hidden>
 					<!-- Product Details -->
@@ -85,6 +85,11 @@
 								<option value="Pallet">Pallet</option>
 							</select>
 						</div>
+						<div class="col-md-6 mb-3">
+							<label class="form-label">Total Lots</label>
+							<input type="number" class="form-control" id="lots"
+							 th:field="*{lots}"  >
+						 </div>
 					</div>
 
 					<!-- Pricing & Discounts -->
@@ -205,6 +210,27 @@
 			}
 
 			document.addEventListener("DOMContentLoaded", toggleLeadTime);
+			
+			document.addEventListener("DOMContentLoaded", function () {
+			    const form = document.getElementById("postProductForm"); 
+			    const quantityInput = document.getElementById("quantity");
+			    const minOrderQuantityInput = document.getElementById("minOrderQuantity");
+			    const lotsInput = document.getElementById("lots");
+				const leadTime = document.getElementById("leadTime");
+
+			    form.addEventListener("submit", function (event) {
+			        const quantity = parseInt(quantityInput.value, 10) || 0;
+			        const minOrderQuantity = parseInt(minOrderQuantityInput.value, 10) || 0;
+			        const lots = parseInt(lotsInput.value, 10) || 0;
+					leadTime.disabled=false;
+
+			        if (minOrderQuantity * lots > quantity) {
+			            event.preventDefault(); 
+			            alert("Error: The total order quantity exceeds the available quantity!");
+			        }
+			    });
+			});
+
 		</script>
 
 	</section>

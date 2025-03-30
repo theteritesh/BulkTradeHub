@@ -353,6 +353,7 @@ public class ProductController {
         @RequestParam("shippingCost") double shippingCost,
         @RequestParam("availabilityType") String availabilityType,
         @RequestParam("leadTime") String leadTime,
+        @RequestParam("lots") int lots,
         @RequestParam(value = "codAvailable", required = false) Boolean codAvailable,
         RedirectAttributes redirectAttributes,Principal principal) {
     	User user =  (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
@@ -382,9 +383,14 @@ public class ProductController {
             productPost.setPostedAt(LocalDateTime.now());
             productPost.setAvailableQuantity(product.getTotalQuantity());
             productPost.setUser(user);
-
+            productPost.setLots(lots);
+            
             // Save ProductPost
             productPostRepository.save(productPost);
+            
+            // Product quantity minus after post
+            product.setTotalQuantity(product.getTotalQuantity()-(minOrderQuantity*lots));
+            productRepository.save(product);
 
             // Success message
             redirectAttributes.addFlashAttribute("successMessage", "Product posted successfully!");
