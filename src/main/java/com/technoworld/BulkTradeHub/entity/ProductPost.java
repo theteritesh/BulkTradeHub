@@ -34,6 +34,7 @@ public class ProductPost {
 	private String leadTime;
 	private boolean codAvailable;
 	private LocalDateTime postedAt;
+	private int lots;
 
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
@@ -193,6 +194,14 @@ public class ProductPost {
 	public void setAvailableQuantity(int availableQuantity) {
 		this.availableQuantity = availableQuantity;
 	}
+	
+	public int getLots() {
+		return lots;
+	}
+
+	public void setLots(int lots) {
+		this.lots = lots;
+	}
 
 	@Override
 	public String toString() {
@@ -201,8 +210,8 @@ public class ProductPost {
 				+ bulkPackageType + ", retailPrice=" + retailPrice + ", wholesalePrice=" + wholesalePrice
 				+ ", availableQuantity=" + availableQuantity + ", bulkDiscount=" + bulkDiscount + ", deliveryTime="
 				+ deliveryTime + ", shippingCost=" + shippingCost + ", availabilityType=" + availabilityType
-				+ ", leadTime=" + leadTime + ", codAvailable=" + codAvailable + ", postedAt=" + postedAt + ", user="
-				+ user + ", productId=" + productId + "]";
+				+ ", leadTime=" + leadTime + ", codAvailable=" + codAvailable + ", postedAt=" + postedAt + ", lots="
+				+ lots + ", user=" + user + ", productId=" + productId + "]";
 	}
 	
 }

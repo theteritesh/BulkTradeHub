@@ -56,7 +56,7 @@ public class DashboardController {
 	@GetMapping("/postProduct")
 	public String postProducts(Model model,Principal principal) {
 		User user =  (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
-	    Product firstProduct = productRepository.findFirstByUserOrderByIdAsc(user);
+	    Product firstProduct = productRepository.findFirstByUserOrderByIdDesc(user);
 	    ProductPost productPost = new ProductPost();
 
 	    if (firstProduct != null) {
