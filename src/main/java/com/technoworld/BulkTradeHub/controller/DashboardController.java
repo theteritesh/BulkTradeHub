@@ -12,10 +12,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.technoworld.BulkTradeHub.entity.Brand;
 import com.technoworld.BulkTradeHub.entity.Category;
 import com.technoworld.BulkTradeHub.entity.Product;
 import com.technoworld.BulkTradeHub.entity.ProductPost;
 import com.technoworld.BulkTradeHub.entity.User;
+import com.technoworld.BulkTradeHub.repository.BrandRepository;
 import com.technoworld.BulkTradeHub.repository.CategoryRepository;
 import com.technoworld.BulkTradeHub.repository.ProductRepository;
 import com.technoworld.BulkTradeHub.service.ProductService;
@@ -32,6 +34,9 @@ public class DashboardController {
 	
 	@Autowired
 	private CategoryRepository categoryRepository;
+	
+	@Autowired
+	private BrandRepository brandRepository;
 	
 	
 	public DashboardController(ProductService productService) {
@@ -107,6 +112,30 @@ public class DashboardController {
 	    model.addAttribute("query", query); // Preserve search input
 
 	    return "/retailshop/category";
+	}
+	
+	@GetMapping("/addBrand")
+	public String displayBrand(@RequestParam(value = "query", required = false) String query,
+	                              Model model,
+	                              @ModelAttribute("successMessage") String successMessage,
+	                              @ModelAttribute("errorMessage") String errorMessage,
+	                              Principal principal) {
+	    User user = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+
+	    List<Brand> brands;
+	    if (query != null && !query.isEmpty()) {
+	    	brands = brandRepository.findByNameContainingAndUser(query, user.getId());
+	    } else {
+	    	brands = brandRepository.findByUser(user.getId());
+	    }
+
+	    model.addAttribute("brandList", brands);
+	    model.addAttribute("brand", new Brand());
+	    model.addAttribute("successMessage", successMessage);
+	    model.addAttribute("errorMessage", errorMessage);
+	    model.addAttribute("query", query); // Preserve search input
+
+	    return "/retailshop/brand";
 	}
 
 

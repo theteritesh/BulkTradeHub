@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/dashboardLayout :: Layout(~{::section})}">
+
+<head>
+</head>
+<section>
+	<div class="mt-5 d-flex justify-content-center mb-5" style="margin: 2%;">
+		<div class="card shadow-lg p-4 rounded" style="width: 100%; background: #ffffff; position: relative;">
+			<div th:if="${successMessage != null and successMessage != ''}"
+				class="alert alert-success text-center w-100">
+				<span th:text="${successMessage}"></span>
+			</div>
+			<div th:if="${errorMessage != null and errorMessage != ''}" class="alert alert-danger text-center w-100">
+				<span th:text="${errorMessage}"></span>
+			</div>
+			<!-- Title, Search Bar, and Request Brand Button -->
+			<div class="d-flex justify-content-between align-items-center mb-3">
+				<h2 class="m-0">Brand List</h2>
+				<div class="d-flex ms-auto">
+					<!-- Search Form -->
+					<form class="d-flex" th:action="@{/dashboard/addBrand}" method="get">
+					    <div class="input-group">
+					        <input type="text" class="form-control" name="query" th:value="${query}" 
+					            placeholder="Search Brand..." aria-label="Search Brand">
+					        <button class="btn btn-primary" type="submit">
+					            <i class="bi bi-search"></i>
+					        </button>
+					    </div>
+					</form>
+
+					<!-- Request Brand Button -->
+					<button class="btn btn-success ms-3" data-bs-toggle="modal" data-bs-target="#requestBrandModal">
+						<i class="bi bi-plus-circle"></i> Request Brand
+					</button>
+				</div>
+			</div>
+
+			<table class="table table-hover table-bordered text-center align-middle">
+				<thead class="table-dark">
+					<tr>
+						<th>ID</th>
+						<th>Name</th>
+						<th>Status</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tr th:each="brand : ${brandList}" class="table-light">
+					<td th:text="${brand.id}"></td>
+					<td th:text="${brand.name}"></td>
+					<td>
+						<span th:switch="${brand.status}">
+						    <span th:case="'Active'" class="badge bg-success">Approved</span>
+						    <span th:case="'Pending Approval'" class="badge bg-warning text-dark">Waiting for Approval</span>
+						    <span th:case="'Edit Requested'" class="badge bg-primary">Edit Requested</span>
+						    <span th:case="'Edit Approved'" class="badge bg-info text-dark">Edit Approved</span>
+						    <span th:case="'Deletion Requested'" class="badge bg-danger">Pending Deletion</span>
+						    <span th:case="'Deleted'" class="badge bg-dark">Deleted</span>
+						    <span th:case="'Rejected'" class="badge bg-secondary">Rejected</span>
+						    <span th:case="*" class="badge bg-secondary">Unknown</span>
+						</span>
+					</td>
+					<td>
+						<button class="btn btn-primary btn-sm edit-btn" data-bs-toggle="modal"
+							data-bs-target="#editBrandModal" th:data-id="${brand.id}"
+							th:data-name="${brand.name}">
+							<i class="bi bi-pen me-1"></i> Edit
+						</button>
+
+						<form th:action="@{/retailShop/deleteBrand}" method="post" class="d-inline-block">
+						    <input type="hidden" name="id" th:value="${brand.id}" />
+						    <button type="submit" class="btn btn-danger btn-sm" 
+						        onclick="return confirm('Are you sure you want to send request to delete this Brand?');">
+						        <i class="bi bi-trash me-1"></i> Delete
+						    </button>
+						</form>
+					</td>
+				</tr>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<!-- Request Brand Modal -->
+	<div class="modal fade" id="requestBrandModal" tabindex="-1" aria-labelledby="requestBrandModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="requestBrandModalLabel">Request New Brand</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form id="requestBrandForm" th:action="@{/retailShop/requestBrand}" method="post"
+						th:object="${brand}">
+						<div class="mb-3">
+							<label for="brandName" class="form-labebrandory">Name</label>
+							<input type="text" class="form-control" id="brandName" th:field="*{name}"
+								placeholder="Enter brand name" required>
+						</div>
+						<button type="submit" class="btn btn-primary w-100">Submit Request</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Edit Brand Modal -->
+	<div class="modal fade" id="editBrandModal" tabindex="-1" aria-labelledby="editBrandModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="editCBrandModalLabel">Edit Brand</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form id="editBrandForm" th:action="@{/retailShop/updateBrand}" method="post">
+						<!-- Hidden Input for Brand ID -->
+						<input type="hidden" id="editBrandId" name="id">
+
+						<div class="mb-3">
+							<label for="editBrandName" class="form-label">Brand Name</label>
+							<input type="text" class="form-control" id="editBrandName" name="name" required>
+						</div>
+
+						<button type="submit" class="btn btn-primary w-100">Update Brand</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+	    document.addEventListener("DOMContentLoaded", function () {
+	        var editButtons = document.querySelectorAll(".edit-btn");
+
+	        editButtons.forEach(function (button) {
+	            button.addEventListener("click", function () {
+	                var brandId = this.getAttribute("data-id");
+	                var brandName = this.getAttribute("data-name");
+
+	                // Set values in the modal
+	                document.getElementById("editBrandId").value = brandId;
+	                document.getElementById("editBrandName").value = brandName;
+	            });
+	        });
+	    });
+	</script>
+</section>
+
+<body>
