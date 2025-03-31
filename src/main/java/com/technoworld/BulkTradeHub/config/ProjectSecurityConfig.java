@@ -23,6 +23,7 @@ public class ProjectSecurityConfig {
                 .requestMatchers("/dashboard/**").hasRole("RETAIL")
                 .requestMatchers("/retail/**").hasRole("RETAIL")
                 .requestMatchers("/products/**").hasRole("RETAIL")
+                .requestMatchers("/retailShop/**").hasRole("RETAIL")
             )
             
         	.formLogin(form -> form

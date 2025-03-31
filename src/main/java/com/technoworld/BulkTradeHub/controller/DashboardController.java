@@ -10,10 +10,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import com.technoworld.BulkTradeHub.entity.Category;
 import com.technoworld.BulkTradeHub.entity.Product;
 import com.technoworld.BulkTradeHub.entity.ProductPost;
 import com.technoworld.BulkTradeHub.entity.User;
+import com.technoworld.BulkTradeHub.repository.CategoryRepository;
 import com.technoworld.BulkTradeHub.repository.ProductRepository;
 import com.technoworld.BulkTradeHub.service.ProductService;
 
@@ -26,6 +29,9 @@ public class DashboardController {
 	
 	@Autowired
 	private ProductRepository productRepository;
+	
+	@Autowired
+	private CategoryRepository categoryRepository;
 	
 	
 	public DashboardController(ProductService productService) {
@@ -78,5 +84,31 @@ public class DashboardController {
 
 	    return "/retailshop/postProduct";
 	}
+	
+	@GetMapping("/addCategory")
+	public String displayCategory(@RequestParam(value = "query", required = false) String query,
+	                              Model model,
+	                              @ModelAttribute("successMessage") String successMessage,
+	                              @ModelAttribute("errorMessage") String errorMessage,
+	                              Principal principal) {
+	    User user = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+
+	    List<Category> categories;
+	    if (query != null && !query.isEmpty()) {
+	        categories = categoryRepository.findByNameContainingAndUser(query, user.getId());
+	    } else {
+	        categories = categoryRepository.findByUser(user.getId());
+	    }
+
+	    model.addAttribute("categoriesList", categories);
+	    model.addAttribute("category", new Category());
+	    model.addAttribute("successMessage", successMessage);
+	    model.addAttribute("errorMessage", errorMessage);
+	    model.addAttribute("query", query); // Preserve search input
+
+	    return "/retailshop/category";
+	}
+
+
 
 }
