@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/dashboardLayout :: Layout(~{::section})}">
+
+<head>
+</head>
+<section>
+	<style>
+		.form-floating {
+			margin-bottom: 10px;
+		}
+		.btn-sm {
+			padding: 5px;
+			font-size: 14px;
+		}
+
+		.image-preview img {
+			width: 120px;
+			height: 120px;
+			object-fit: cover;
+			cursor: pointer;
+			border-radius: 4px;
+		}
+		#productTable{
+			margin: 1%;
+			font-size: 14px;
+			font-family: 'Times New Roman', Times, serif;
+		}
+		
+	</style>
+	<div class=" mt-5 d-flex justify-content-center mb-5" id="productTable">
+		<div class="card shadow-lg p-4 rounded" style="width: 100%; background: #ffffff; position: relative;">
+
+			<!-- Title and Search Bar in the Same Card -->
+			<div class="d-flex justify-content-between align-items-center mb-3">
+				<h2 class="m-0">Product List</h2>
+				<!-- Search Form -->
+				<form class="d-flex ms-auto" th:action="@{/retailShop/searchPost}" method="GET">
+					<div class="input-group">
+						<input type="text" class="form-control" name="query" th:value="${query}"
+							placeholder="Search Post..." aria-label="Search Post">
+						<button class="btn btn-primary" type="submit">
+							<i class="bi bi-search"></i>
+						</button>
+					</div>
+				</form>
+			</div>
+
+			<table class="table table-hover table-bordered text-center align-middle">
+				<thead class="table-dark">
+					<tr>
+						<th>ID</th>
+						<th>Peoduct Name</th>
+						<th>Product Id</th>
+						<th>Min Order Quantity</th>
+						<th>Lots</th>
+						<th>Package Type</th>
+						<th>Wholesale Price</th>
+						<th>Discount(%)</th>
+						<th>Delivery Time</th>
+						<th>Shipping Cost</th>
+						<th>Description</th>
+						<th>Availability Type</th>
+						<th>COD</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="productPost : ${productPostList}" class="table-light">
+						<td th:text="${productPost.id}"></td>
+						<td th:text="${productPost.productName}"></td>
+						<td th:text="${productPost.productId}"></td>
+						<td th:text="${productPost.minOrderQuantity}"></td>
+						<td th:text="${productPost.lots}"></td>
+						<td th:text="${productPost.bulkPackageType}"></td>
+						<td th:text="${productPost.wholesalePrice}"></td>
+						<td th:text="${productPost.bulkDiscount}"></td>
+						<td th:text="${productPost.deliveryTime}"></td>
+						<td th:text="${productPost.shippingCost}"></td>
+						<td th:text="${productPost.description}" class="text-wrap"
+							style="width: 100%; height: 100px; overflow-y: auto; display: inline-block; vertical-align: top;">
+						</td>
+						<td th:text="${productPost.availabilityType}"></td>
+						<td th:text="${productPost.codAvailable}"></td>
+						<td>
+						    <a th:href="@{/retailShop/deleteProductPost/{id}(id=${productPost.id})}"
+								class="btn btn-danger btn-sm d-inline-flex align-items-center"
+						        onclick="return confirm('Are you sure you want to delete this product post?');">
+						        <i class="bi bi-trash me-1"></i> Delete
+						    </a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</section>
+
+<body>

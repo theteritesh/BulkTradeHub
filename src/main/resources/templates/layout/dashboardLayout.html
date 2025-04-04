@@ -107,15 +107,6 @@
 							<span>View Products</span>
 						</a>
 					</li>
-
-					<li>
-						<a th:href="@{/dashboard/postProduct}" class="nav-link px-3 active">
-							<span class="me-2">
-								<i class="bi bi-postcard"></i>
-							</span>
-							<span>Post Products</span>
-						</a>
-					</li>
 					<li>
 						<a class="nav-link px-3 sidebar-link active" data-bs-toggle="collapse" href="#collapseExample"
 							role="button" aria-expanded="false" aria-controls="collapseExample">
@@ -138,6 +129,22 @@
 										<a th:href="@{/dashboard/addBrand}" class="nav-link px-3 active">
 											<span><i class="bi bi-globe"></i></span>
 											<span>Brand</span>
+										</a>
+									</li>
+									<li>
+										<a th:href="@{/dashboard/postProduct}" class="nav-link px-3 active">
+											<span class="me-2">
+												<i class="bi bi-postcard"></i>
+											</span>
+											<span>Post Products</span>
+										</a>
+									</li>
+									<li>
+										<a th:href="@{/dashboard/showPost}" class="nav-link px-3 active">
+											<span class="me-2">
+												<i class="bi bi-view-list"></i>
+											</span>
+											<span>View Post</span>
 										</a>
 									</li>
 								</ul>

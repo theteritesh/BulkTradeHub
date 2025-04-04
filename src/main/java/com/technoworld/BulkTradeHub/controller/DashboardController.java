@@ -19,6 +19,7 @@ import com.technoworld.BulkTradeHub.entity.ProductPost;
 import com.technoworld.BulkTradeHub.entity.User;
 import com.technoworld.BulkTradeHub.repository.BrandRepository;
 import com.technoworld.BulkTradeHub.repository.CategoryRepository;
+import com.technoworld.BulkTradeHub.repository.ProductPostRepository;
 import com.technoworld.BulkTradeHub.repository.ProductRepository;
 import com.technoworld.BulkTradeHub.service.ProductService;
 
@@ -37,6 +38,9 @@ public class DashboardController {
 	
 	@Autowired
 	private BrandRepository brandRepository;
+	
+	@Autowired
+	private ProductPostRepository productPostRepository;
 	
 	
 	public DashboardController(ProductService productService) {
@@ -137,6 +141,15 @@ public class DashboardController {
 
 	    return "/retailshop/brand";
 	}
+	
+	@GetMapping("/showPost")
+    public String displayPost(Model model,@ModelAttribute("successMessage") String successMessage,Principal principal) {
+		User user =  (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+        List<ProductPost> productPostList =productPostRepository.findAllByUserOrderByIdDesc(user);
+        model.addAttribute("successMessage", successMessage);
+        model.addAttribute("productPostList", productPostList);
+        return "/retailshop/showPost";
+    }
 
 
 

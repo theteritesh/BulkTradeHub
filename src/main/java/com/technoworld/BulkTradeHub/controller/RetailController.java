@@ -10,6 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,9 +18,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.technoworld.BulkTradeHub.entity.Brand;
 import com.technoworld.BulkTradeHub.entity.Category;
+import com.technoworld.BulkTradeHub.entity.Product;
+import com.technoworld.BulkTradeHub.entity.ProductPost;
 import com.technoworld.BulkTradeHub.entity.User;
 import com.technoworld.BulkTradeHub.repository.BrandRepository;
 import com.technoworld.BulkTradeHub.repository.CategoryRepository;
+import com.technoworld.BulkTradeHub.repository.ProductPostRepository;
 
 @Controller
 @RequestMapping("/retailShop")
@@ -30,6 +34,9 @@ public class RetailController {
 	
 	@Autowired
 	private BrandRepository brandRepository;
+	
+	@Autowired
+	private ProductPostRepository productPostRepository;
 	
 	@PostMapping("/requestCategory")
 	public String requestCategory(@RequestParam("name") String name, Principal principal, RedirectAttributes redirectAttributes) {
@@ -231,5 +238,28 @@ public class RetailController {
 	    return "redirect:/dashboard/addBrand";
 	}
 	
+	@GetMapping("/searchPost")
+    public String searchProducts(@RequestParam("query") String query, Model model,Principal principal) {
+    	User user =  (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+        List<ProductPost> filteredProductPosts = productPostRepository.searchProductPost(query,user.getId());
+        model.addAttribute("productPostList", filteredProductPosts);
+        model.addAttribute("query", query);
+        return "/retailshop/showPost";
+    }
+	
+	@GetMapping("/deleteProductPost/{id}")
+    public String deleteProductPost(@PathVariable int id, RedirectAttributes redirectAttributes) {
+        try {
+        	Optional<ProductPost> productPostOptional=productPostRepository.findById(id);
+        	if(productPostOptional.isPresent()) {
+        		productPostRepository.delete(productPostOptional.get());
+        	}
+            redirectAttributes.addFlashAttribute("successMessage", "Product deleted successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to delete product.");
+        }
+        return "redirect:/dashboard/showPost";
+    }
+    
 	
 }
