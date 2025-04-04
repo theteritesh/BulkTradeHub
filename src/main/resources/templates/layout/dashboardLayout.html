@@ -39,8 +39,28 @@
 					</div>
 				</form>
 				<ul class="navbar-nav  mb-2 mb-lg-0">
-					<li class="nav-item">
+					<li class="nav-item me-1">
 						<a class="nav-link active" aria-current="page" th:href="@{/home}">Home</a>
+					</li>
+					<li class="nav-item dropdown me-1">
+					    <a class="nav-link position-relative dropdown-toggle" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+					        <i class="bi bi-bell-fill bell-icon" style="font-size: larger;"></i>
+					        <span class="position-absolute top-5 start-70 translate-middle badge rounded-pill bg-danger"
+					              th:if="${lowStockProducts != null and !lowStockProducts.isEmpty()}"
+					              th:text="${lowStockProducts.size()}">
+					        </span>
+					    </a>
+					    <ul class="dropdown-menu dropdown-menu-end text-wrap" style="min-width: 250px;" aria-labelledby="notificationDropdown">
+					        <li th:if="${lowStockProducts == null || lowStockProducts.isEmpty()}">
+					            <a class="dropdown-item text-muted">No new notifications</a>
+					        </li>
+					        <li th:each="product : ${lowStockProducts}">
+					            <a class="dropdown-item text-danger"
+					               th:href="@{/dashboard/showLowStockProduct}"
+					               th:text="${'Id: ' + product.id + ' ' + product.name + ' is low on stock!'}">
+					            </a>
+					        </li>
+					    </ul>
 					</li>
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle " href="#" id="navbarDropdown" role="button"
@@ -147,6 +167,14 @@
 											<span>View Post</span>
 										</a>
 									</li>
+									<li>
+										<a th:href="@{/dashboard/showLowStockProduct}" class="nav-link px-3 active">
+											<span class="me-2">
+												<i class="bi bi-arrow-bar-down"></i>
+											</span>
+											<span>Low Stock Product</span>
+										</a>
+									</li>
 								</ul>
 							</div>
 						</div>
@@ -158,14 +186,6 @@
 								<i class="bi bi-clock-history"></i>
 							</span>
 							<span>Order History</span>
-						</a>
-					</li>
-					<li>
-						<a href="#" class="nav-link px-3 active">
-							<span class="me-2">
-								<i class="bi bi-box2"></i>
-							</span>
-							<span>Inventory</span>
 						</a>
 					</li>
 					<li>

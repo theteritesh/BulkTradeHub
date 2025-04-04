@@ -151,6 +151,13 @@ public class DashboardController {
         return "/retailshop/showPost";
     }
 
-
+	@GetMapping("/showLowStockProduct")
+    public String displayLowStockProduct(Model model,@ModelAttribute("successMessage") String successMessage,Principal principal) {
+		User user =  (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+        List<Product> productList = productRepository.findLowStockProductsByUser(user);
+        model.addAttribute("successMessage", successMessage);
+        model.addAttribute("products", productList);
+        return "/retailshop/lowStockProduct";
+    }
 
 }

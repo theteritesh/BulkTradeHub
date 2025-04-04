@@ -25,13 +25,16 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 		       " ORDER BY p.id DESC")
 		List<Product> searchProductsByUser(@Param("query") String query, @Param("userId") int userId);
 	
-	List<Product> findByUserOrderByIdDesc(User user);
+	@Query("SELECT p FROM Product p WHERE p.user = :user AND p.totalQuantity > 10 ORDER BY p.id DESC")
+	List<Product> findByUserOrderByIdDesc(@Param("user") User user);
 	
 	@Query("SELECT p FROM Product p WHERE p.id = :id AND p.user.id = :userId")
     Optional<Product> findByIdAndUser(Long id, int userId);
 
 	Product findFirstByUserOrderByIdDesc(User user);
 
+	@Query("SELECT p FROM Product p WHERE p.totalQuantity <= 10 AND p.user = :user ORDER BY p.totalQuantity ASC")
+	List<Product> findLowStockProductsByUser(@Param("user") User user);
 	
 		
 }

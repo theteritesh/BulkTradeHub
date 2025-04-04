@@ -27,6 +27,24 @@ button{
 .sidebar-link[aria-expanded="true"] .right-icon{
     transform: rotate(180deg);
 }
+
+.bell-icon {
+    transition: transform 0.3s ease;
+    display: inline-block;
+}
+
+.nav-link:hover .bell-icon {
+    animation: ring 0.6s ease-in-out;
+}
+
+@keyframes ring {
+    0%   { transform: rotate(0); }
+    25%  { transform: rotate(15deg); }
+    50%  { transform: rotate(-15deg); }
+    75%  { transform: rotate(10deg); }
+    100% { transform: rotate(0); }
+}
+
 @media (min-width:992px) {
     body{
         overflow: auto !important;
