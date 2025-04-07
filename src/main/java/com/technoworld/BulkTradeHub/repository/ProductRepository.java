@@ -36,6 +36,15 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	@Query("SELECT p FROM Product p WHERE p.totalQuantity <= 10 AND p.user = :user ORDER BY p.totalQuantity ASC")
 	List<Product> findLowStockProductsByUser(@Param("user") User user);
 	
+	@Query("SELECT p FROM Product p WHERE p.user.id = :userId AND p.totalQuantity <= 10 AND (" +
+		       "LOWER(p.name) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+		       "LOWER(p.category) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+		       "LOWER(p.brand) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+		       "LOWER(p.description) LIKE LOWER(CONCAT('%', :query, '%')))" +
+		       " ORDER BY p.totalQuantity ASC")
+	List<Product> searchLowStockProductsByUser(@Param("query") String query, @Param("userId") int userId);
+
+	
 		
 }
 

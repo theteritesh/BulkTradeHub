@@ -34,7 +34,7 @@
 			<div class="d-flex justify-content-between align-items-center mb-3">
 				<h2 class="m-0">Low Stock Product List</h2>
 				<!-- Search Form -->
-				<form class="d-flex ms-auto" th:action="@{/products/search}" method="GET">
+				<form class="d-flex ms-auto" th:action="@{/retailShop/searchLowCostProduct}" method="GET">
 					<div class="input-group">
 						<input type="text" class="form-control" name="query" th:value="${query}"
 							placeholder="Search Product..." aria-label="Search Product">
@@ -44,7 +44,15 @@
 					</div>
 				</form>
 			</div>
+			<div th:if="${errorMessage != null and !#strings.isEmpty(errorMessage)}" class="alert alert-danger">
+			    <p th:text="${errorMessage}"></p>
+			</div>
 
+			<div th:if="${successMessage != null and !#strings.isEmpty(successMessage)}" class="alert alert-success">
+			    <span th:text="${successMessage}"></span>
+			</div>
+
+			
 			<table class="table table-hover table-bordered text-center align-middle">
 				<thead class="table-dark">
 					<tr>
@@ -81,7 +89,7 @@
 						<td th:text="${product.cost}"></td>
 						<td th:text="${product.unitType}"></td>
 						<td th:text="${product.unitValue}"></td>
-						<td th:text="${product.totalQuantity}"></td>
+						<td th:text="${product.totalQuantity}" style="font-weight: 700; color: red;"></td>
 						<td th:text="${product.description}" class="text-wrap"
 							style="width: 100%; height: 100px; overflow-y: auto; display: inline-block; vertical-align: top;">
 						</td>
@@ -89,20 +97,8 @@
 						<td th:text="${product.expiryDate}"></td>
 						<td style="width: 150px;">
 							<button class="btn btn-primary btn-sm edit-btn" data-bs-toggle="modal"
-								data-bs-target="#editModal" th:data-id="${product.id}" th:data-name="${product.name}"
-								th:data-brand="${product.brand}" th:data-category="${product.category}"
-								th:data-description="${product.description}" th:data-price="${product.price}"
-								th:data-cost="${product.cost}" th:data-unitType="${product.unitType}"
-								th:data-unitValue="${product.unitValue}"
-								th:data-totalQuantity="${product.totalQuantity}" th:data-warranty="${product.warranty}"
-								th:data-expiryDate="${product.expiryDate}" th:data-gtin="${product.gTin}"
-								th:data-mainImage="@{/products/mainImage/{id}(id=${product.id})}"
-								th:data-firstImage="@{/products/firstImage/{id}(id=${product.id})}"
-								th:data-secondImage="@{/products/secondImage/{id}(id=${product.id})}"
-								th:data-thirdImage="@{/products/thirdImage/{id}(id=${product.id})}"
-								th:data-fourthImage="@{/products/fourthImage/{id}(id=${product.id})}"
-								th:data-fifthImage="@{/products/fifthImage/{id}(id=${product.id})}">
-
+								data-bs-target="#editModal" th:data-id="${product.id}" 
+								th:data-totalQuantity="${product.totalQuantity}" >
 								<i class="bi bi-pen me-1"></i>Edit
 							</button>
 							<a th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-danger btn-sm"
@@ -116,163 +112,27 @@
 		</div>
 	</div>
 
-	<!--Edit Modal-->
+	<!-- Edit Quantity Modal Only -->
 	<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="editModalLabel">Edit Product</h5>
+					<h5 class="modal-title" id="editModalLabel">Edit Quantity</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
-					<form id="editForm" th:action="@{/products/update}" method="post" enctype="multipart/form-data"
-						class="row g-3">
+					<form id="editForm" th:action="@{/retailShop/updateQuantity}" method="post">
 						<input type="hidden" id="edit-id" name="id">
 
-						<!-- Image Upload -->
-						<div class="col-12 text-center">
-							<label class="form-label d-block mb-3 fw-bold">Select Photos</label>
-							<div class="d-flex flex-wrap justify-content-center gap-3">
-								<!-- Image Previews & Inputs -->
-								<div class="image-preview" onclick="document.getElementById('edit-image1').click()">
-									<img id="edit-previewImage1" src="/retailshop/img/productDefault.png"
-										alt="Product Image">
-								</div>
-								<input type="file" class="d-none" id="edit-image1" name="mainImage" accept="image/*"
-									onchange="previewEditFile(1)">
-
-								<div class="image-preview" onclick="document.getElementById('edit-image2').click()">
-									<img id="edit-previewImage2" src="/retailshop/img/productDefault.png"
-										alt="Product Image">
-								</div>
-								<input type="file" class="d-none" id="edit-image2" name="firstImage" accept="image/*"
-									onchange="previewEditFile(2)">
-
-								<div class="image-preview" onclick="document.getElementById('edit-image3').click()">
-									<img id="edit-previewImage3" src="/retailshop/img/productDefault.png"
-										alt="Product Image">
-								</div>
-								<input type="file" class="d-none" id="edit-image3" name="secondImage" accept="image/*"
-									onchange="previewEditFile(3)">
-
-								<div class="image-preview" onclick="document.getElementById('edit-image4').click()">
-									<img id="edit-previewImage4" src="/retailshop/img/productDefault.png"
-										alt="Product Image">
-								</div>
-								<input type="file" class="d-none" id="edit-image4" name="thirdImage" accept="image/*"
-									onchange="previewEditFile(4)">
-
-								<div class="image-preview" onclick="document.getElementById('edit-image5').click()">
-									<img id="edit-previewImage5" src="/retailshop/img/productDefault.png"
-										alt="Product Image">
-								</div>
-								<input type="file" class="d-none" id="edit-image5" name="fourthImage" accept="image/*"
-									onchange="previewEditFile(5)">
-
-								<div class="image-preview" onclick="document.getElementById('edit-image6').click()">
-									<img id="edit-previewImage6" src="/retailshop/img/productDefault.png"
-										alt="Product Image">
-								</div>
-								<input type="file" class="d-none" id="edit-image6" name="fifthImage" accept="image/*"
-									onchange="previewEditFile(6)">
-							</div>
-						</div>
-
-						<!-- GTIN -->
-						<div class="col-6 form-floating">
-							<input type="text" class="form-control" id="edit-gtin" name="gTin" placeholder="GTIN"
-								disabled>
-							<label for="edit-gtin">GTIN</label>
-						</div>
-
-						<!-- Warranty -->
-						<div class="col-md-6 form-floating">
-							<input type="text" class="form-control" id="edit-warranty" name="warranty">
-							<label for="edit-warranty">Warranty in Months</label>
-
-						</div>
-
-						<!-- Expiry Date -->
-						<div class="col-md-6 form-floating">
-							<input type="date" class="form-control" id="edit-expiryDate" name="expiryDate">
-							<label for="edit-expiryDate">Expiry Date</label>
-						</div>
-						<div class="col-md-6 form-floating">
-							<input type="text" class="form-control mt-2 d-none" id="edit-customWarranty"
-								name="customWarranty" placeholder="Enter custom warranty">
-						</div>
-
-						<!-- Product Name -->
-						<div class="col-12 form-floating">
-							<input type="text" class="form-control" id="edit-name" name="name"
-								placeholder="Product Name">
-							<label for="edit-name">Product Name</label>
-						</div>
-
-						<!-- Category -->
-						<div class="col-md-6 form-floating">
-							<input type="text" class="form-control" id="edit-category" name="category"
-								placeholder="Category">
-							<label for="edit-category">Category</label>
-						</div>
-
-						<!-- Brand -->
-						<div class="col-md-6 form-floating">
-							<input type="text" class="form-control" id="edit-brand" name="brand" placeholder="Brand">
-							<label for="edit-brand">Brand</label>
-						</div>
-
-						<!-- Description -->
-						<div class="col-12 form-floating">
-							<textarea class="form-control" id="edit-description" name="description"
-								placeholder="Description"></textarea>
-							<label for="edit-description">Description</label>
-						</div>
-
-						<!-- Unit Type -->
-						<div class="col-md-6 form-floating">
-							<select class="form-select" id="edit-unitType" name="unitType">
-								<option value="" disabled>Select Unit Type</option>
-								<option value="pcs">Pieces</option>
-								<option value="kg">Kilograms</option>
-								<option value="g">Grams</option>
-								<option value="liters">Liters</option>
-								<option value="meters">Meters</option>
-							</select>
-							<label for="edit-unitType">Unit Type</label>
-						</div>
-
-						<!-- Unit Value -->
-						<div class="col-md-6 form-floating">
-							<input type="number" class="form-control" id="edit-unitValue" name="unitValue"
-								placeholder="Unit Value">
-							<label for="edit-unitValue">Unit Value</label>
-						</div>
-
-						<!-- Selling Price -->
-						<div class="col-md-4 form-floating">
-							<input type="number" class="form-control" id="edit-price" name="price"
-								placeholder="Selling Price">
-							<label for="edit-price">Selling Price</label>
-						</div>
-
-						<!-- Cost Price -->
-						<div class="col-md-4 form-floating">
-							<input type="number" class="form-control" id="edit-cost" name="cost"
-								placeholder="Cost Price">
-							<label for="edit-cost">Cost Price</label>
-						</div>
-
-						<!-- Stock Quantity -->
-						<div class="col-md-4 form-floating">
+						<!-- Edit Quantity -->
+						<div class="form-floating mb-3">
 							<input type="number" class="form-control" id="edit-totalQuantity" name="totalQuantity"
-								placeholder="Stock Quantity">
-							<label for="edit-totalQuantity">Stock Quantity</label>
+								placeholder="Enter Quantity" required min="0">
+							<label for="edit-totalQuantity">Quantity</label>
 						</div>
 
-						<!-- Submit Button -->
-						<div class="col-12 text-center">
-							<button type="submit" class="btn w-100 btn-primary">Update Product</button>
+						<div class="text-end">
+							<button type="submit" class="btn btn-success">Save</button>
 						</div>
 					</form>
 				</div>
@@ -280,60 +140,17 @@
 		</div>
 	</div>
 
+
 	<script>
 		document.addEventListener("DOMContentLoaded", function () {
 			document.querySelectorAll('.edit-btn').forEach(button => {
 				button.addEventListener('click', function () {
-					// Populate product details
 					document.getElementById('edit-id').value = this.getAttribute('data-id');
-					document.getElementById('edit-name').value = this.getAttribute('data-name');
-					document.getElementById('edit-category').value = this.getAttribute('data-category');
-					document.getElementById('edit-brand').value = this.getAttribute('data-brand');
-					document.getElementById('edit-description').value = this.getAttribute('data-description');
-					document.getElementById('edit-price').value = this.getAttribute('data-price');
-					document.getElementById('edit-cost').value = this.getAttribute('data-cost');
-					document.getElementById('edit-unitType').value = this.getAttribute('data-unitType');
-					document.getElementById('edit-unitValue').value = this.getAttribute('data-unitValue');
 					document.getElementById('edit-totalQuantity').value = this.getAttribute('data-totalQuantity');
-					document.getElementById('edit-gtin').value = this.getAttribute('data-gtin'); // New GTIN field
-					document.getElementById('edit-warranty').value = this.getAttribute('data-warranty'); // New Warranty field
-					document.getElementById('edit-expiryDate').value = this.getAttribute('data-expiryDate'); // New Expiry Date field
-
-					// Set Image Previews
-					document.getElementById('edit-previewImage1').src = this.getAttribute('data-mainImage') || "/retailshop/img/productDefault.png";
-					document.getElementById('edit-previewImage2').src = this.getAttribute('data-firstImage') || "/retailshop/img/productDefault.png";
-					document.getElementById('edit-previewImage3').src = this.getAttribute('data-secondImage') || "/retailshop/img/productDefault.png";
-					document.getElementById('edit-previewImage4').src = this.getAttribute('data-thirdImage') || "/retailshop/img/productDefault.png";
-					document.getElementById('edit-previewImage5').src = this.getAttribute('data-fourthImage') || "/retailshop/img/productDefault.png";
-					document.getElementById('edit-previewImage6').src = this.getAttribute('data-fifthImage') || "/retailshop/img/productDefault.png";
 				});
 			});
 
-			document.getElementById('edit-warranty').addEventListener('change', function () {
-				var customInput = document.getElementById('edit-customWarranty');
-				if (this.value === 'custom') {
-					customInput.classList.remove('d-none');
-					customInput.required = true;
-				} else {
-					customInput.classList.add('d-none');
-					customInput.required = false;
-				}
-			});
 		});
-		function previewEditFile(index) {
-			const fileInput = document.getElementById(`edit-image${index}`);
-			const previewImage = document.getElementById(`edit-previewImage${index}`);
-
-			if (fileInput.files && fileInput.files[0]) {
-				const reader = new FileReader();
-				reader.onload = function (e) {
-					previewImage.src = e.target.result;
-				};
-				reader.readAsDataURL(fileInput.files[0]);
-			}
-		}
-
-
 	</script>
 
 

@@ -24,6 +24,7 @@ import com.technoworld.BulkTradeHub.entity.User;
 import com.technoworld.BulkTradeHub.repository.BrandRepository;
 import com.technoworld.BulkTradeHub.repository.CategoryRepository;
 import com.technoworld.BulkTradeHub.repository.ProductPostRepository;
+import com.technoworld.BulkTradeHub.repository.ProductRepository;
 
 @Controller
 @RequestMapping("/retailShop")
@@ -37,6 +38,9 @@ public class RetailController {
 	
 	@Autowired
 	private ProductPostRepository productPostRepository;
+	
+	@Autowired
+	private ProductRepository productRepository;
 	
 	@PostMapping("/requestCategory")
 	public String requestCategory(@RequestParam("name") String name, Principal principal, RedirectAttributes redirectAttributes) {
@@ -261,5 +265,30 @@ public class RetailController {
         return "redirect:/dashboard/showPost";
     }
     
-	
+	 @GetMapping("/searchLowCostProduct")
+	    public String searchLowCostProduct(@RequestParam("query") String query, Model model,Principal principal) {
+	    	User user =  (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+	        List<Product> filteredProducts = productRepository.searchLowStockProductsByUser(query,user.getId());
+	        model.addAttribute("products", filteredProducts);
+	        model.addAttribute("query", query);
+	        return "/retailshop/lowStockProduct"; 
+	    }
+	 
+	 @PostMapping("/updateQuantity")
+	    public String updateQuantity(@RequestParam Long id,
+	                                @RequestParam int totalQuantity,
+	                                RedirectAttributes redirectAttributes) {
+	        Optional<Product> existingProductOptional = productRepository.findById(id);
+			Product existingProduct=existingProductOptional.get();
+			if (!existingProductOptional.isPresent()) {
+			    redirectAttributes.addFlashAttribute("errorMessage", "Product not found!");
+			    return "redirect:/dashboard/lowStockProduct";
+			}
+			existingProduct.setTotalQuantity(totalQuantity);
+			// Save the updated product
+			productRepository.save(existingProduct);
+			redirectAttributes.addFlashAttribute("successMessage", "Product updated successfully!");
+
+	        return "redirect:/dashboard/showLowStockProduct";
+	    }
 }
