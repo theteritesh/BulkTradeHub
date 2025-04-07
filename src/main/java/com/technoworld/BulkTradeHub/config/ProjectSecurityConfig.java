@@ -13,7 +13,7 @@ public class ProjectSecurityConfig {
 	@Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/home/**").permitAll()
+                .requestMatchers("/**").permitAll()
                 .requestMatchers("/admin/**").permitAll()            
                 .requestMatchers("/main/**").permitAll()
                 .requestMatchers("/login").permitAll()

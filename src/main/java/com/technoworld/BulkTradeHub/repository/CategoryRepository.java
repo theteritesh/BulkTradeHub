@@ -14,5 +14,6 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
 	boolean existsByNameAndUser(String name, int userId);
 	List<Category> findByNameContainingAndUser(String name, int userId);
 
+
 }
 

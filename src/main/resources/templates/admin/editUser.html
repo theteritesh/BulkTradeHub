@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"xmlns:th=http//www.thymelef.org>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -46,10 +46,10 @@
     </style>
 </head>
 <body>
-    <!-- Navbar -->
+ <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold" th:href="@{/admin/getAllRetailer}">User Management</a>
+            <a class="navbar-brand fw-bold" th:href="@{/admin/getAllRetailer}">Edit Users</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -67,53 +67,64 @@
             </div>
         </div>
     </nav>
+    <!-- Sidebar and Main Content -->
 
-    <!-- Sidebar -->
+<!-- Main Content -->
+
     <div class="d-flex">
         <div class="bg-dark text-white p-3 min-vh-100" id="sidebar">
             <h5 class="text-uppercase">Core</h5>
             <ul class="nav flex-column">
                <br>
-                <li class="nav-item"><a class="nav-link text-white" th:href="@{admin/getAllRetailer}"><i class="bi bi-people"></i> Retailer Management</a></li>
-                <li class="nav-item"><a class="nav-link text-white"th:href="@{/admin/getAllSalesman}"><i class="bi bi-people"></i> Salesman Management</a></li>
-                <li class="nav-item"><a class="nav-link text-white" href="#"><i class="bi bi-people"></i> Other</a></li>
+                <li class="nav-item"><a class="nav-link text-white" th:href="@{/admin/getAllUserData}"><i class="bi bi-people"></i> User Management</a></li>
+               
             </ul>
               </div>
-         <!-- Main Content -->
-         <div class="container mt-4">
-            <h2 class="mb-3">All Users</h2>
-            
-            <div class="mb-3">
-                <input type="text" class="form-control" placeholder="Search Users...">
-            </div>
-            
-            <div class="table-responsive">
-              <table class="table table-bordered table-hover">
-   				<thead class="table-dark">
-					<tr>
-						<th>ID</th>
-						<th>Name</th>
-						<th>Email</th>
-						<th>Role</th>
-						<th>Actions</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr th:each="user : ${userData}">
-						<td th:text="${user.id}"></td>
-						<td th:text="${user.name}"></td>
-						<td th:text="${user.email}"></td>
-						<td th:text="${user.roles}"></td>
-						<td>
-						    <a th:href="@{/admin/editUserById/{id}(id=${user.id})}" class="btn btn-sm btn-info">Edit</a>
-                            <a th:href="@{/admin/deleteUserById/{id}(id=${user.id})}" class="btn btn-sm btn-danger">Delete</a>
-						</td>
-					</tr>
-				</tbody>
-                </table>
+<main class="p-4 w-100 mt-5 pt-3 d-flex justify-content-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+                <div class="card shadow p-4">
+                    <h3 class="mb-4 text-center">Edit User</h3>
+                    <form th:action="@{/admin/saveEditUser}" method="post">
+                        <div class="mb-3">
+                          <input type="hidden" class="form-control" id="name" name="id" th:value="${data.id}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="name" name="name" th:value="${data.name}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email address</label>
+                            <input type="email" class="form-control" id="email" name="email" th:value="${data.email}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Role</label>
+                            <select class="form-select" id="role" name="role" th:value="${data.roles}">
+                                <option value="ADMIN">ROLE_RETAIL</option>
+                                <option value="SALESMAN">ROLE_Salesman</option>
+                            </select>
+                        </div>
+                        
+                           <div class="mb-3">
+                          <input type="hidden" class="form-control" id="name" name="password" th:value="${data.password}">
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Save Info</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
- </div>
-     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    </div>
+</main>
+<!-- Main Content End -->
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

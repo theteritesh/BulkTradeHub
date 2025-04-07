@@ -11,14 +11,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.technoworld.BulkTradeHub.entity.Contact;
 import com.technoworld.BulkTradeHub.entity.Product;
 import com.technoworld.BulkTradeHub.entity.ProductPost;
 import com.technoworld.BulkTradeHub.repository.ProductPostRepository;
 import com.technoworld.BulkTradeHub.repository.ProductRepository;
+import com.technoworld.BulkTradeHub.service.ContactService;
 
 
 @Controller
@@ -30,7 +33,9 @@ public class HomeController {
 	
 	@Autowired
 	private ProductRepository productRepository;
-	
+
+	@Autowired 
+	private ContactService contactService;
 	@GetMapping("")
     public String displayHome(@RequestParam(defaultValue = "0") int page, Model model) {
         int pageSize = 16;  // Show 16 products per page
@@ -55,6 +60,11 @@ public class HomeController {
 	    return ResponseEntity.notFound().build();
 	}
 
+
 	
-	
+	@PostMapping("/contact")
+	public String saveContactMessage(Contact contact) {
+		contactService.saveContactMessage(contact); 
+		return "redirect:/home";
+	}
 }

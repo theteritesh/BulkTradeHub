@@ -76,6 +76,9 @@
                 <li class="nav-item"><a class="nav-link text-white" th:href="@{/admin/userManagement}"><i class="bi bi-people"></i> User Management</a></li>
                 <li class="nav-item"><a class="nav-link text-white" href="#"><i class="bi bi-box"></i> Product Management</a></li>
                 <li class="nav-item"><a class="nav-link text-white" href="#"><i class="bi bi-cart"></i> Order Management</a></li>
+                <li class="nav-item"><a class="nav-link text-white" th:href="@{/admin/category}"><i class="bi bi-cart"></i> Category Requests</a></li>
+                <li class="nav-item"><a class="nav-link text-white" th:href="@{/admin/brand}"><i class="bi bi-cart"></i> Brand Requests</a></li>
+                <li class="nav-item"><a class="nav-link text-white" th:href="@{/admin/contactMessages}"><i class="bi bi-cart"></i> Contact Requests</a></li>
                 <li class="nav-item"><a class="nav-link text-white" href="#"><i class="bi bi-bar-chart"></i> Reports & Analytics</a></li>
                 <li class="nav-item"><a class="nav-link text-white" href="#"><i class="bi bi-bell"></i> Notifications</a></li>
                 <li class="nav-item"><a class="nav-link text-white" href="#"><i class="bi bi-gear"></i> Settings</a></li>
@@ -112,6 +115,23 @@
                         <h5>Reports & Analytics</h5>
                         <p>Analyze sales data and performance.</p>
                         <a href="#" class="btn btn-primary">View Reports</a>
+                    </div>
+                </div>
+                
+                 <div class="col-md-6">
+                    <div class="card p-3">
+                        <h5>Category Request</h5>
+                        <p>Analyze sales data and performance.</p>
+                        <a th:href="@{/admin/category}" class="btn btn-primary">Category</a>
+                    </div>
+                </div>
+                
+                
+                 <div class="col-md-6">
+                    <div class="card p-3">
+                        <h5>Brand Request</h5>
+                        <p>Analyze sales data and performance.</p>
+                        <a th:href="@{/admin/brand}" class="btn btn-primary">Brand</a>
                     </div>
                 </div>
             </div>

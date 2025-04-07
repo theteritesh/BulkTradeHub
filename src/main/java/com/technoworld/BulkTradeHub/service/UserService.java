@@ -1,5 +1,7 @@
 package com.technoworld.BulkTradeHub.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,5 +22,17 @@ public class UserService {
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		userRepository.save(user);
 	}
+	
+	public User findUserById(int id) {
+		Optional<User> user = userRepository.findById(id);
+		
+		if(user.isPresent()) {
+			return user.get();
+		}
+		return null;
+	}
 
+	public void deleteUserById(int id) {
+		userRepository.deleteById(id);
+	}
 }
