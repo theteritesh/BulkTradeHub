@@ -43,6 +43,7 @@ public class DashboardController {
 	private ProductPostRepository productPostRepository;
 	
 	
+	
 	public DashboardController(ProductService productService) {
 		this.productService = productService;
 	}
@@ -53,7 +54,14 @@ public class DashboardController {
 	}
 	
 	@GetMapping({"/addProduct"})
-	public String displayAddProduct(Model model,@ModelAttribute("successMessage") String successMessage) {
+	public String displayAddProduct(Model model,@ModelAttribute("successMessage") String successMessage,
+			Principal principal) {
+		User user =  (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+		List<Category> categories=categoryRepository.findByUserAndStatusIn(user.getId(),List.of("Active", "Edit Approved"));
+		List<Brand> brandsList=brandRepository.findByUserAndStatusIn(user.getId(),List.of("Active", "Edit Approved"));
+		
+		model.addAttribute("categoryList", categories);
+		model.addAttribute("brandList",brandsList );
 		model.addAttribute("product",new Product());
 	    model.addAttribute("successMessage", successMessage);
 		return "/retailshop/addProduct";
@@ -63,6 +71,12 @@ public class DashboardController {
     public String displayProducts(Model model,@ModelAttribute("successMessage") String successMessage,Principal principal) {
 		User user =  (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
         List<Product> productList = productService.getAllProducts(user);
+        
+		List<Category> categories=categoryRepository.findByUserAndStatusIn(user.getId(),List.of("Active", "Edit Approved"));
+		List<Brand> brandsList=brandRepository.findByUserAndStatusIn(user.getId(),List.of("Active", "Edit Approved"));
+		
+		model.addAttribute("categoryList", categories);
+		model.addAttribute("brandList",brandsList );
         model.addAttribute("successMessage", successMessage);
         model.addAttribute("products", productList);
         return "/retailshop/showProduct";
@@ -106,14 +120,14 @@ public class DashboardController {
 	    if (query != null && !query.isEmpty()) {
 	        categories = categoryRepository.findByNameContainingAndUser(query, user.getId());
 	    } else {
-	        categories = categoryRepository.findByUser(user.getId());
+	        categories = categoryRepository.findByUserAndStatusNot(user.getId(),"Deleted");
 	    }
 
 	    model.addAttribute("categoriesList", categories);
 	    model.addAttribute("category", new Category());
 	    model.addAttribute("successMessage", successMessage);
 	    model.addAttribute("errorMessage", errorMessage);
-	    model.addAttribute("query", query); // Preserve search input
+	    model.addAttribute("query", query); 
 
 	    return "/retailshop/category";
 	}
@@ -130,7 +144,7 @@ public class DashboardController {
 	    if (query != null && !query.isEmpty()) {
 	    	brands = brandRepository.findByNameContainingAndUser(query, user.getId());
 	    } else {
-	    	brands = brandRepository.findByUser(user.getId());
+	    	brands = brandRepository.findByUserAndStatusNot(user.getId(),"Deleted");
 	    }
 
 	    model.addAttribute("brandList", brands);

@@ -18,6 +18,8 @@ import com.technoworld.BulkTradeHub.entity.Contact;
 import com.technoworld.BulkTradeHub.entity.Profile;
 import com.technoworld.BulkTradeHub.entity.RetailShopProfile;
 import com.technoworld.BulkTradeHub.entity.User;
+import com.technoworld.BulkTradeHub.repository.BrandRepository;
+import com.technoworld.BulkTradeHub.repository.CategoryRepository;
 import com.technoworld.BulkTradeHub.repository.UserRepository;
 import com.technoworld.BulkTradeHub.service.AdminServiceImplementation;
 import com.technoworld.BulkTradeHub.service.ContactService;
@@ -38,6 +40,12 @@ private ContactService contactService;
 
 @Autowired
 private UserService userService;
+
+@Autowired
+private CategoryRepository categoryRepository;
+
+@Autowired
+private BrandRepository brandRepository;
 	
 
 	@GetMapping("/dashboard")
@@ -100,7 +108,7 @@ private UserService userService;
 	@GetMapping("/category")
 	public String categoryView(Model model){
 		
-		List<Category> category = sr.getAllCategory();
+		List<Category> category = categoryRepository.findByStatusIn(List.of("Pending Approval","Edit Requested","Deletion Requested"));
 		model.addAttribute("categoryData", category);
 		return "admin/categoryRequest";
 	}
@@ -116,7 +124,7 @@ private UserService userService;
 
 	@GetMapping("/brand")
 	public String barndView(Model model){
-		List<Brand> brand = sr.getAllBrand();
+		List<Brand> brand =brandRepository.findByStatusIn(List.of("Pending Approval","Edit Requested","Deletion Requested"));
 		model.addAttribute("brandData", brand);
 		return "admin/brandRequest";
 	}

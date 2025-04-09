@@ -1,133 +1,166 @@
 <!DOCTYPE html>
-<html lang="en"xmlns:th=http//www.thymelef.org>
+<html lang="en" xmlns:th=http//www.thymelef.org>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Category View- BulkThreadHub</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="styles.css">
-    <style>
-        /* Sidebar Styling */
-        #sidebar {
-            width: 250px;
-            transition: all 0.3s ease-in-out;
-            border-right: 2px solid #444;
-        }
-        #sidebar .nav-item {
-            margin-bottom: 5px;
-            padding: 8px;
-            border-radius: 5px;
-            transition: background 0.3s, transform 0.3s;
-        }
-        #sidebar .nav-item:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.05);
-        }
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        /* Page Animations */
-        .card {
-            transition: transform 0.3s ease-in-out;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-        }
-        body {
-            animation: fadeIn 1s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-    </style>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Category View- BulkThreadHub</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link rel="stylesheet" href="styles.css">
+	<style>
+		/* Sidebar Styling */
+		#sidebar {
+			width: 250px;
+			transition: all 0.3s ease-in-out;
+			border-right: 2px solid #444;
+		}
+
+		#sidebar .nav-item {
+			margin-bottom: 5px;
+			padding: 8px;
+			border-radius: 5px;
+			transition: background 0.3s, transform 0.3s;
+		}
+
+		#sidebar .nav-item:hover {
+			background: rgba(255, 255, 255, 0.2);
+			transform: scale(1.05);
+		}
+
+		.nav-link {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		/* Page Animations */
+		.card {
+			transition: transform 0.3s ease-in-out;
+		}
+
+		.card:hover {
+			transform: translateY(-5px);
+		}
+
+		body {
+			animation: fadeIn 1s ease-in-out;
+		}
+
+		@keyframes fadeIn {
+			from {
+				opacity: 0;
+			}
+
+			to {
+				opacity: 1;
+			}
+		}
+	</style>
 </head>
+
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <div class="container-fluid">
-            <a class="navbar-brand fw-bold" th:href="@{/admin/dashboard}">Admin Dashboard</a>  
-          <a class="nav-link text-white" href="@{admin/category}"><i class="bi bi-people"></i> Category Requests</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Profile</a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="#">Settings</a></li>
-                            <li><a class="dropdown-item" href="#">Logout</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+	<!-- Navbar -->
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+		<div class="container-fluid">
+			<a class="navbar-brand fw-bold" th:href="@{/admin/dashboard}">Admin Dashboard</a>
+			<a class="nav-link text-white" href="@{admin/category}"><i class="bi bi-people"></i> Category Requests</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarNav">
+				<ul class="navbar-nav ms-auto">
+					<li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Profile</a>
+						<ul class="dropdown-menu dropdown-menu-end">
+							<li><a class="dropdown-item" href="#">Settings</a></li>
+							<li><a class="dropdown-item" href="#">Logout</a></li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
 
-    <!-- Sidebar -->
-    <div class="d-flex">
-        <div class="bg-dark text-white p-3 min-vh-100" id="sidebar">
-            <h5 class="text-uppercase">Core</h5>
-            <ul class="nav flex-column">
-                <li class="nav-item"><a class="nav-link text-white"th:href="@{/admin/userManagement}"><i class="bi bi-box"></i> User Management</a></li>
-                <li class="nav-item"><a class="nav-link text-white" href="#"><i class="bi bi-box"></i> Product Management</a></li>
-                <li class="nav-item"><a class="nav-link text-white" href="#"><i class="bi bi-cart"></i> Order Management</a></li>
-                <li class="nav-item"><a class="nav-link text-white" th:href="@{/admin/brand}"><i class="bi bi-cart"></i> Brand Requests</a></li>
-                <li class="nav-item"><a class="nav-link text-white" href="#"><i class="bi bi-bar-chart"></i> Reports & Analytics</a></li>
-                <li class="nav-item"><a class="nav-link text-white" href="#"><i class="bi bi-bell"></i> Notifications</a></li>
-                <li class="nav-item"><a class="nav-link text-white" href="#"><i class="bi bi-gear"></i> Settings</a></li>
-            </ul>
-        </div>
+	<!-- Sidebar -->
+	<div class="d-flex">
+		<div class="bg-dark text-white p-3 min-vh-100" id="sidebar">
+			<h5 class="text-uppercase">Core</h5>
+			<ul class="nav flex-column">
+				<li class="nav-item"><a class="nav-link text-white" th:href="@{/admin/userManagement}"><i
+							class="bi bi-box"></i> User Management</a></li>
+				<li class="nav-item"><a class="nav-link text-white" href="#"><i class="bi bi-box"></i> Product
+						Management</a></li>
+				<li class="nav-item"><a class="nav-link text-white" href="#"><i class="bi bi-cart"></i> Order
+						Management</a></li>
+				<li class="nav-item"><a class="nav-link text-white" th:href="@{/admin/brand}"><i class="bi bi-cart"></i>
+						Brand Requests</a></li>
+				<li class="nav-item"><a class="nav-link text-white" href="#"><i class="bi bi-bar-chart"></i> Reports &
+						Analytics</a></li>
+				<li class="nav-item"><a class="nav-link text-white" href="#"><i class="bi bi-bell"></i>
+						Notifications</a></li>
+				<li class="nav-item"><a class="nav-link text-white" href="#"><i class="bi bi-gear"></i> Settings</a>
+				</li>
+			</ul>
+		</div>
 
-     
-           <!-- Main Content -->
-         <div class="container mt-4">
-            <h2 class="mb-3">All Users</h2>
-            
-            <div class="mb-3">
-                <input type="text" class="form-control" placeholder="Search Users...">
-            </div>
-            
-            <div class="table-responsive">
-              <table class="table table-bordered table-hover">
-   				<thead class="table-dark">
-					<tr>
-					<th>Sr.No</th>
-						<th>Name</th>
-						<th>Request Create AT</th>
-						<th>Request Update AT</th>
-						<th>Status</th>
-						<th>User_ID</th>
-						<th>Actions</th>
-					</tr>
-				</thead>
-				<tbody>
-				<tr th:each="data , no :${categoryData}">	
-				<td th:text="${no.index+1}">   </td>			
-				<td th:text="${data.name}">   </td>
-				<td th:text="${data.createdAt}">   </td>
-				<td th:text="${data.updatedAt}">   </td>
-			<td><span  th:text="${data.status}" class="badge bg-warning text-dark"></span></td>
-		     
-					<td th:text="${data.user}">   </td>
-						<td>
-						 <a th:href="@{/admin/approveCategoryRequest/{id}(id=${data.id})}" class="btn btn-sm btn-info">Approve</a>
-						 <a th:href="@{/admin/rejectCategoryRequest/{id}(id=${data.id})}" class="btn btn-sm btn-danger">Reject</a>
-						</td> 
 
-					</tr>
-				</tbody>
-                </table>
-            </div>
-        </div>
-     
-       
+		<!-- Main Content -->
+		<div class="container mt-4">
+			<h2 class="mb-3">All Users</h2>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+			<div class="mb-3">
+				<input type="text" class="form-control" placeholder="Search Users...">
+			</div>
+
+			<div class="table-responsive">
+				<table class="table table-bordered table-hover">
+					<thead class="table-dark">
+						<tr>
+							<th>Sr.No</th>
+							<th>Name</th>
+							<th>Request Create AT</th>
+							<th>Request Update AT</th>
+							<th>Status</th>
+							<th>User_ID</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="data , no :${categoryData}">
+							<td th:text="${no.index+1}"> </td>
+							<td th:text="${data.name}"> </td>
+							<td th:text="${data.createdAt}"> </td>
+							<td th:text="${data.updatedAt}"> </td>
+							<td>
+								<span th:switch="${data.status}">
+								    <span th:case="'Active'" class="badge bg-success">Approved</span>
+								    <span th:case="'Pending Approval'" class="badge bg-warning text-dark">Waiting for Approval</span>
+								    <span th:case="'Edit Requested'" class="badge bg-primary">Edit Requested</span>
+								    <span th:case="'Edit Approved'" class="badge bg-info text-dark">Edit Approved</span>
+								    <span th:case="'Deletion Requested'" class="badge bg-danger">Pending Deletion</span>
+								    <span th:case="'Deleted'" class="badge bg-dark">Deleted</span>
+								    <span th:case="'Rejected'" class="badge bg-secondary">Rejected</span>
+								    <span th:case="*" class="badge bg-secondary">Unknown</span>
+								</span>
+							</td>
+							<td th:text="${data.user}"> </td>
+							<td>
+								<a th:href="@{/admin/approveCategoryRequest/{id}(id=${data.id})}"
+									class="btn btn-sm btn-info">Approve</a>
+								<a th:href="@{/admin/rejectCategoryRequest/{id}(id=${data.id})}"
+									class="btn btn-sm btn-danger">Reject</a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+
+
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

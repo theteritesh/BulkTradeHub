@@ -112,7 +112,18 @@
 				<td th:text="${data.name}">   </td>
 				<td th:text="${data.createdAt}">   </td>
 				<td th:text="${data.updatedAt}">   </td>
-			<td><span  th:text="${data.status}" class="badge bg-warning text-dark"></span></td>
+				<td>
+					<span th:switch="${data.status}">
+				    <span th:case="'Active'" class="badge bg-success">Approved</span>
+				    <span th:case="'Pending Approval'" class="badge bg-warning text-dark">Waiting for Approval</span>
+				    <span th:case="'Edit Requested'" class="badge bg-primary">Edit Requested</span>
+				    <span th:case="'Edit Approved'" class="badge bg-info text-dark">Edit Approved</span>
+				    <span th:case="'Deletion Requested'" class="badge bg-danger">Pending Deletion</span>
+				    <span th:case="'Deleted'" class="badge bg-dark">Deleted</span>
+				    <span th:case="'Rejected'" class="badge bg-secondary">Rejected</span>
+				    <span th:case="*" class="badge bg-secondary">Unknown</span>
+				</span>
+				</td>
 		     
 					<td th:text="${data.user}">   </td>
 						<td>

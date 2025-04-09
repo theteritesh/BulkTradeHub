@@ -88,10 +88,9 @@ public class Brand {
 		this.updatedAt = updatedAt;
 	}
 
-
 	@Override
 	public String toString() {
-		return "Category [id=" + id + ", name=" + name + ", user=" + user + ", status=" + status + ", createdAt="
+		return "Brand [id=" + id + ", name=" + name + ", user=" + user + ", status=" + status + ", createdAt="
 				+ createdAt + ", updatedAt=" + updatedAt + "]";
 	}
     

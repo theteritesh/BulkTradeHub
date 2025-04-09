@@ -209,17 +209,23 @@
 							<label for="edit-name">Product Name</label>
 						</div>
 
-						<!-- Category -->
+						
+						<!-- Category Dropdown -->
 						<div class="col-md-6 form-floating">
-							<input type="text" class="form-control" id="edit-category" name="category"
-								placeholder="Category">
-							<label for="edit-category">Category</label>
+							<select class="form-select" id="edit-category" name="category" >
+								<option value="" disabled selected>Select Category</option>
+								<option th:each="cat : ${categoryList}" th:value="${cat.name}" th:text="${cat.name}"></option>
+							</select>
+							<label for="productCategory">Category</label>
 						</div>
 
-						<!-- Brand -->
+						<!-- Brand Dropdown -->
 						<div class="col-md-6 form-floating">
-							<input type="text" class="form-control" id="edit-brand" name="brand" placeholder="Brand">
-							<label for="edit-brand">Brand</label>
+							<select class="form-select" id="edit-brand" name="brand">
+								<option value="" disabled selected>Select Brand</option>
+								<option th:each="br : ${brandList}" th:value="${br.name}" th:text="${br.name}"></option>
+							</select>
+							<label for="productBrand">Brand</label>
 						</div>
 
 						<!-- Description -->

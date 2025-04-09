@@ -133,17 +133,21 @@
 							<label for="productName">Product Name</label>
 						</div>
 
-						<!-- Category -->
+						<!-- Category Dropdown -->
 						<div class="col-md-6 form-floating">
-							<input type="text" class="form-control" id="productCategory" th:field="*{category}"
-								placeholder="Category">
+							<select class="form-select" id="productCategory" th:field="*{category}">
+								<option value="" disabled selected>Select Category</option>
+								<option th:each="cat : ${categoryList}" th:value="${cat.name}" th:text="${cat.name}"></option>
+							</select>
 							<label for="productCategory">Category</label>
 						</div>
 
-						<!-- Brand -->
+						<!-- Brand Dropdown -->
 						<div class="col-md-6 form-floating">
-							<input type="text" class="form-control" id="productBrand" th:field="*{brand}"
-								placeholder="Brand">
+							<select class="form-select" id="productBrand" th:field="*{brand}">
+								<option value="" disabled selected>Select Brand</option>
+								<option th:each="br : ${brandList}" th:value="${br.name}" th:text="${br.name}"></option>
+							</select>
 							<label for="productBrand">Brand</label>
 						</div>
 						<div class="col-md-6 form-floating">
