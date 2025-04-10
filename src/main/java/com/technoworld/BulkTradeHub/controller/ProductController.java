@@ -25,8 +25,10 @@ import org.springframework.web.bind.annotation.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.technoworld.BulkTradeHub.entity.Product;
+import com.technoworld.BulkTradeHub.entity.ProductGtinInfo;
 import com.technoworld.BulkTradeHub.entity.ProductPost;
 import com.technoworld.BulkTradeHub.entity.User;
+import com.technoworld.BulkTradeHub.repository.ProductGtinInfoRepository;
 import com.technoworld.BulkTradeHub.repository.ProductPostRepository;
 import com.technoworld.BulkTradeHub.repository.ProductRepository;
 import com.technoworld.BulkTradeHub.service.ProductService;
@@ -44,6 +46,9 @@ public class ProductController {
     
     @Autowired
     private ProductPostRepository productPostRepository;
+    
+    @Autowired
+    private ProductGtinInfoRepository productRepo;
 
     public ProductController(ProductService productService) {
         this.productService = productService;
@@ -267,6 +272,8 @@ public class ProductController {
         return "/retailshop/showProduct"; // Ensure the correct Thymeleaf template is used
     }
     
+    
+
     @GetMapping("/verifyGtin")
     public ResponseEntity<Map<String, Object>> checkProduct(@RequestParam(required = false) String gtin) {
         Map<String, Object> responseMap = new HashMap<>();
@@ -277,36 +284,37 @@ public class ProductController {
             return ResponseEntity.badRequest().body(responseMap);
         }
 
+        // Try from local DB first
+        Optional<ProductGtinInfo> localProduct = productRepo.findByGtin(gtin);
+        if (localProduct.isPresent()) {
+            ProductGtinInfo product = localProduct.get();
+            responseMap.put("valid", true);
+            responseMap.put("product_name", product.getProductName());
+            responseMap.put("brand", product.getBrand());
+            responseMap.put("category", product.getCategory());
+            responseMap.put("description", product.getDescription());
+            return ResponseEntity.ok(responseMap);
+        }
+
+        // If API still available (optional fallback logic)
+        /*
         String url = API_URL + "?formatted=y&key=" + API_KEY + "&barcode=" + gtin;
         RestTemplate restTemplate = new RestTemplate();
-
         try {
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            
-            // Use Jackson to parse JSON response
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode root = objectMapper.readTree(response.getBody());
-
-            // Check if products exist in the response
-            if (root.has("products") && root.get("products").isArray() && root.get("products").size() > 0) {
-                JsonNode product = root.get("products").get(0); // First product in the list
-                responseMap.put("valid", true);
-                responseMap.put("product_name", product.has("product_name") ? product.get("product_name").asText() : "Unknown Product");
-                responseMap.put("brand", product.has("brand") ? product.get("brand").asText() : "Unknown Brand");
-                responseMap.put("category", product.has("category") ? product.get("category").asText() : "Unknown Category");
-                responseMap.put("description", product.has("description")?product.get("description").asText():"");
-            } else {
-                responseMap.put("valid", false);
-                responseMap.put("message", "Invalid GTIN. No product found.");
-            }
-
-            return ResponseEntity.ok(responseMap);
+            // Parse and use as before...
         } catch (Exception e) {
             responseMap.put("valid", false);
             responseMap.put("message", "Error verifying GTIN: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseMap);
         }
+        */
+
+        responseMap.put("valid", false);
+        responseMap.put("message", "Product not found in local database.");
+        return ResponseEntity.ok(responseMap);
     }
+
     
     @GetMapping("/searchProduct")
     public String searchProductForPost(@RequestParam(value = "productId", required = false) Long productId, Model model,
