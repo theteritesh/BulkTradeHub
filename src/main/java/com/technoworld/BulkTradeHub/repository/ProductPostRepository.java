@@ -28,5 +28,8 @@ public interface ProductPostRepository extends JpaRepository<ProductPost, Intege
             "ORDER BY id DESC", 
     nativeQuery = true)
 	List<ProductPost> searchProductPost(@Param("query") String query, @Param("id") int id);
+	
+	@Query("SELECT COUNT(p) FROM ProductPost p WHERE p.user = :user")
+	long countTotalProductsByUser(User user);
 
 }

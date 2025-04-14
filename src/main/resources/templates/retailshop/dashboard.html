@@ -5,55 +5,109 @@
 </head>
 
 <body>
-    <section>
-		<div class="container-fluid">
-		            <div class="row">
-		                <div class="col-md-12 fw-bold fs-3">Dashboard</div>
-		            </div>
-		            <div class="row">
-		                <div class="col-md-3 mb-3">
-		                    <div class="card text-white bg-primary h-100">
-		                        <div class="card-header">Header</div>
-		                        <div class="card-body">
-		                            <h5 class="card-title">Primary card title</h5>
-		                            <p class="card-text">Some quick example text to build on the card title and make up the bulk
-		                                of the card's content.</p>
-		                        </div>
-		                    </div>
-		                </div>
-		                <div class="col-md-3 mb-3">
-		                    <div class="card text-white bg-primary h-100">
-		                        <div class="card-header">Header</div>
-		                        <div class="card-body">
-		                            <h5 class="card-title">Primary card title</h5>
-		                            <p class="card-text">Some quick example text to build on the card title and make up the bulk
-		                                of the card's content.</p>
-		                        </div>
-		                    </div>
-		                </div>
-		                <div class="col-md-3 mb-3">
-		                    <div class="card text-white bg-primary h-100">
-		                        <div class="card-header">Header</div>
-		                        <div class="card-body">
-		                            <h5 class="card-title">Primary card title</h5>
-		                            <p class="card-text">Some quick example text to build on the card title and make up the bulk
-		                                of the card's content.</p>
-		                        </div>
-		                    </div>
-		                </div>
-		                <div class="col-md-3 mb-3">
-		                    <div class="card text-white bg-primary h-100">
-		                        <div class="card-header">Header</div>
-		                        <div class="card-body">
-		                            <h5 class="card-title">Primary card title</h5>
-		                            <p class="card-text">Some quick example text to build on the card title and make up the bulk
-		                                of the card's content.</p>
-		                        </div>
-		                    </div>
-		                </div>
-		            </div>
-		        </div>
-    </section>
+	<section>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<link rel="stylesheet" href="retailshop/css/dashStyles.css">
+
+		<div class="container-fluid px-4 py-4">
+			<!-- Page Header -->
+			<div class="d-flex justify-content-between align-items-center mb-4">
+				<h1 class="h3 mb-0 text-gray-800">Dashboard Overview</h1>
+				<button class="btn btn-primary" id="refreshBtn" onclick="refreshData()">
+					<i class="fas fa-sync-alt me-2"></i>Refresh Data
+				</button>
+			</div>
+			<!-- Statistics Cards -->
+			<div class="row g-4 mb-5">
+				<!-- Total Products Card -->
+				<div class="col-xl-3 col-md-6">
+					<div class="card stat-card card-blue text-white h-100">
+						<div class="card-body d-flex justify-content-between align-items-center">
+							<div>
+								<div class="text-xs text-white-50 mb-1">TOTAL PRODUCTS</div>
+								<div class="h3 mb-0 fw-bold">250</div>
+							</div>
+							<div class="icon">
+								<i class="fas fa-shopping-bag"></i>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Posted Products Card -->
+				<div class="col-xl-3 col-md-6">
+					<div class="card stat-card card-green text-white h-100">
+						<div class="card-body d-flex justify-content-between align-items-center">
+							<div>
+								<div class="text-xs text-white-50 mb-1">POSTED PRODUCTS</div>
+								<div class="h3 mb-0 fw-bold">150</div>
+							</div>
+							<div class="icon">
+								<i class="fas fa-tags"></i>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Low Stock Card -->
+				<div class="col-xl-3 col-md-6">
+					<div class="card stat-card card-orange text-white h-100">
+						<div class="card-body d-flex justify-content-between align-items-center">
+							<div>
+								<div class="text-xs text-white-50 mb-1">LOW STOCK</div>
+								<div class="h3 mb-0 fw-bold">25</div>
+							</div>
+							<div class="icon">
+								<i class="fas fa-exclamation-triangle"></i>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Out of Stock Card -->
+				<div class="col-xl-3 col-md-6">
+					<div class="card stat-card card-red text-white h-100">
+						<div class="card-body d-flex justify-content-between align-items-center">
+							<div>
+								<div class="text-xs text-white-50 mb-1">OUT OF STOCK</div>
+								<div class="h3 mb-0 fw-bold">10</div>
+							</div>
+							<div class="icon">
+								<i class="fas fa-times-circle"></i>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Charts -->
+			<div class="row g-4">
+				<!-- Product Status Distribution -->
+				<div class="col-xl-6">
+					<div class="chart-container p-4 mb-4">
+						<h5 class="mb-4">
+							<i class="fas fa-chart-pie me-2"></i>
+							Product Status Distribution
+						</h5>
+						<canvas id="productStatusChart"></canvas>
+					</div>
+				</div>
+
+				<!-- Monthly Product Addition Trend -->
+				<div class="col-xl-6">
+					<div class="chart-container p-4 mb-4">
+						<h5 class="mb-4">
+							<i class="fas fa-chart-line me-2"></i>
+							Monthly Product Addition Trend
+						</h5>
+						<canvas id="productTrendChart"></canvas>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="/retailshop/js/retailDash.js"></script>
+	</section>
 </body>
 
 </html>

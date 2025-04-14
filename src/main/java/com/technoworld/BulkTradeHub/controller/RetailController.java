@@ -2,7 +2,9 @@ package com.technoworld.BulkTradeHub.controller;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.technoworld.BulkTradeHub.entity.Brand;
@@ -291,4 +294,20 @@ public class RetailController {
 
 	        return "redirect:/dashboard/showLowStockProduct";
 	    }
+	 
+	 @GetMapping("/retailDashboardOverview")
+	 @ResponseBody
+	 public Map<String, Long> getRetailDashboardOverview(Principal principal) {
+	     User user = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+	     Map<String, Long> status = new HashMap<>();
+
+	     status.put("totalPosted", Optional.ofNullable(productPostRepository.countTotalProductsByUser(user)).orElse(0L));
+	     status.put("outOfStock", Optional.ofNullable(productRepository.countOutOfStockProductsByUser(user)).orElse(0L));
+	     status.put("lowStock", Optional.ofNullable(productRepository.countLowStockProductsByUser(user)).orElse(0L));
+	     status.put("inStock", Optional.ofNullable(productRepository.countByUser(user)).orElse(0L));
+
+	     return status;
+	 }
+
+
 }

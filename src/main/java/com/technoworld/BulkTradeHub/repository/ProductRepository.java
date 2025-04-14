@@ -43,6 +43,14 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 		       "LOWER(p.description) LIKE LOWER(CONCAT('%', :query, '%')))" +
 		       " ORDER BY p.totalQuantity ASC")
 	List<Product> searchLowStockProductsByUser(@Param("query") String query, @Param("userId") int userId);
+	
+	long countByUser(User user);
+	
+	@Query("SELECT COUNT(p) FROM Product p WHERE p.user = :user AND p.totalQuantity = 0")
+    long countOutOfStockProductsByUser(User user);
+	
+	@Query("SELECT COUNT(p) FROM Product p WHERE p.user = :user AND p.totalQuantity BETWEEN 1 AND 10")
+	long countLowStockProductsByUser(User user);
 
 	
 		
