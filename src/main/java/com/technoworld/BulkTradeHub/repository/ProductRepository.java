@@ -51,6 +51,15 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	
 	@Query("SELECT COUNT(p) FROM Product p WHERE p.user = :user AND p.totalQuantity BETWEEN 1 AND 10")
 	long countLowStockProductsByUser(User user);
+	
+	
+	@Query(value = "SELECT DATE_FORMAT(created_at, '%M') AS month, COUNT(*) AS count " +
+            "FROM products " +
+            "WHERE YEAR(created_at) = :year AND user_id = :userId " +
+            "GROUP BY MONTH(created_at), DATE_FORMAT(created_at, '%M') " +
+            "ORDER BY MONTH(created_at)", nativeQuery = true)
+	List<Object[]> getMonthlyProductCountByUser(@Param("year") int year, @Param("userId") int userId);
+
 
 	
 		

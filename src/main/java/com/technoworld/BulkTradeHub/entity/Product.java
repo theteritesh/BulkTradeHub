@@ -1,6 +1,7 @@
 package com.technoworld.BulkTradeHub.entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -68,7 +69,8 @@ public class Product {
 	    
 	    private String warranty;
 	    private LocalDate expiryDate;
-	    
+	    private LocalDateTime createdAt;
+	    private LocalDateTime modifiedAt;
 	    
 
 		public Long getId() {
@@ -231,6 +233,22 @@ public class Product {
 			this.expiryDate = expiryDate;
 		}
 
+		public LocalDateTime getCreatedAt() {
+			return createdAt;
+		}
+
+		public void setCreatedAt(LocalDateTime createdAt) {
+			this.createdAt = createdAt;
+		}
+
+		public LocalDateTime getModifiedAt() {
+			return modifiedAt;
+		}
+
+		public void setModifiedAt(LocalDateTime modifiedAt) {
+			this.modifiedAt = modifiedAt;
+		}
+
 		@Override
 		public String toString() {
 			return "Product [id=" + id + ", name=" + name + ", category=" + category + ", brand=" + brand
@@ -239,6 +257,7 @@ public class Product {
 					+ ", user=" + user + ", mainImage=" + Arrays.toString(mainImage) + ", firstImage="
 					+ Arrays.toString(firstImage) + ", secondImage=" + Arrays.toString(secondImage) + ", thirdImage="
 					+ Arrays.toString(thirdImage) + ", fourthImage=" + Arrays.toString(fourthImage) + ", fifthImage="
-					+ Arrays.toString(fifthImage) + ", warranty=" + warranty + ", expiryDate=" + expiryDate + "]";
+					+ Arrays.toString(fifthImage) + ", warranty=" + warranty + ", expiryDate=" + expiryDate
+					+ ", createdAt=" + createdAt + ", modifiedAt=" + modifiedAt + "]";
 		}
 }

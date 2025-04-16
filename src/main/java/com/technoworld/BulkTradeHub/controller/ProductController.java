@@ -126,6 +126,7 @@ public class ProductController {
 	    	product.setExpiryDate(expiryDate);
 	    	product.setWarranty(warranty);
 	    	product.setgTin(gTin);
+	    	product.setCreatedAt(LocalDateTime.now());
 	    	
 	        productService.saveProduct(product);
 	        redirectAttributes.addFlashAttribute("successMessage", "Product added successfully!");
@@ -230,6 +231,7 @@ public class ProductController {
             existingProduct.setTotalQuantity(totalQuantity);
             existingProduct.setWarranty(warranty);
             existingProduct.setExpiryDate(expiryDate);
+            existingProduct.setModifiedAt(LocalDateTime.now());
 
             // Update image only if a new file is uploaded
             if (mainImage != null && !mainImage.isEmpty()) {

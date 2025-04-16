@@ -1,7 +1,9 @@
 package com.technoworld.BulkTradeHub.controller;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -308,6 +310,25 @@ public class RetailController {
 
 	     return status;
 	 }
+	 
+	 @GetMapping("/monthlyProductCount")
+	 @ResponseBody
+	 public List<Map<String, Object>> getMonthlyProductCountByUser(Principal principal) {
+		    User user =  (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+	        int currentYear = LocalDate.now().getYear();
+
+	        List<Object[]> results = productRepository.getMonthlyProductCountByUser(currentYear, user.getId());
+
+	        List<Map<String, Object>> response = new ArrayList<>();
+	        for (Object[] row : results) {
+	            Map<String, Object> data = new HashMap<>();
+	            data.put("month", row[0]);
+	            data.put("count", row[1]);
+	            response.add(data);
+	        }
+
+	        return response;
+	    }
 
 
 }
