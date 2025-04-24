@@ -20,7 +20,7 @@ public class ProductPost {
 	private String category;
 	private String brand;
 
-	@Column(length = 1000)
+	@Column(length = 5000)
 	private String description;
 	private int minOrderQuantity;
 	private String bulkPackageType;

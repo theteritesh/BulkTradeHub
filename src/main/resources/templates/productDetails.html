@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{/homeLayout :: Layout(~{::section})}"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security6">
+
+<head>
+</head>
+
+<body>
+	<section>
+		<link rel="stylesheet" href="/main/css/productDetails.css">
+		<div class="container py-5">
+			<div class="row g-5 justify-content-center">
+				<div class="d-flex">
+					<!-- Thumbnails on Left -->
+					<div class="d-flex flex-column align-items-center me-3">
+						<img th:src="'data:image/jpeg;base64,' + ${firstImageBase64}" class="img-thumbnail mb-2 thumbnail-img" alt="Thumbnail 1"
+							onclick="changeMainImage(this)">
+						<img th:src="'data:image/jpeg;base64,' + ${secondImageBase64}" class="img-thumbnail mb-2 thumbnail-img" alt="Thumbnail 2"
+							onclick="changeMainImage(this)">
+						<img th:src="'data:image/jpeg;base64,' + ${thirdImageBase64}" class="img-thumbnail mb-2 thumbnail-img" alt="Thumbnail 3"
+							onclick="changeMainImage(this)">
+						<img th:src="'data:image/jpeg;base64,' + ${fourthImageBase64}" class="img-thumbnail mb-2 thumbnail-img" alt="Thumbnail 4"
+							onclick="changeMainImage(this)">
+						<img th:src="'data:image/jpeg;base64,' + ${fifthImageBase64}" class="img-thumbnail mb-2 thumbnail-img" alt="Thumbnail 5"
+							onclick="changeMainImage(this)">
+
+					</div>
+
+					<!-- Main Image -->
+					<div class="col-md-6" style="position: relative;">
+					  <img id="mainProductImage" th:src="'data:image/jpeg;base64,' + ${mainImageBase64}" alt="Product Image"
+					    class="img-fluid product-img">
+					  <div class="zoom-box" id="zoom-box"></div>
+					</div>
+
+					<!-- Product Details -->
+					<div class="col-md-5">
+						<p style="font-size: 2rem; font-weight: 500;"><span th:text="${productPost.productName}"></span></p>
+						<p class="text-success" style="font-size: 0.8rem; ">Available Lots
+							 (<span th:text="${productPost.lots}" id="availableLots" th:value="${productPost.lots}"></span>)</p>
+						<div>
+							<span class="text-red-600 font-bold" style="font-size: 2rem;">
+								₹<span th:text="${productPost.wholesalePrice * productPost.minOrderQuantity}">
+								</span>
+		                    </span>
+							<span class="text-gray-500 fs-6 line-through ml-2">
+							    ₹<span th:text="${productPost.retailPrice * productPost.minOrderQuantity}"></span>
+							</span>
+							<div class="mt-1">
+						        <span class="badge bg-success" id="discountPercent">
+						            <span th:text="${productPost.bulkDiscount}"></span>% OFF
+						        </span>
+						    </div>
+						</div>
+
+						<table style="width: 100%; border-collapse: collapse;">
+						    <tr>
+						        <td style=" font-weight: 600; white-space: nowrap; width: 1px;">Brand</td>
+								<td style=" font-weight: bold;">:</td>
+						        <td><span th:text="${productPost.brand}"></span></td>
+						    </tr>
+						    <tr>
+						        <td style=" font-weight: 600; white-space: nowrap; width: 1px;">Category</td>
+								<td style=" font-weight: bold;">:</td>
+						        <td ><span th:text="${productPost.category}"></span></td>
+						    </tr>
+						    <tr>
+						        <td style=" font-weight: 600; white-space: nowrap; width: 1px;">Products Per Lot</td>
+								<td style=" font-weight: bold;">:</td>
+						        <td ><span th:text="${productPost.minOrderQuantity}"></span></td>
+						    </tr>
+						    <tr>
+						        <td style=" font-weight: 600; white-space: nowrap; width: 1px;">Single Product Retail Price</td>
+								<td style=" font-weight: bold;">:</td>
+						        <td ><span th:text="${productPost.retailPrice}"></span></td>
+						    </tr>
+						    <tr>
+						        <td style=" font-weight: 600; white-space: nowrap; width: 1px;">Single Product Wholesale Price</td>
+								<td style=" font-weight: bold;">:</td>
+						        <td><span th:text="${productPost.wholesalePrice}"></span></td>
+						    </tr>
+						</table>
+						<div class="d-flex align-items-center mt-3">
+							<button class="btn btn-outline-secondary" type="button" id="decreaseBtn">-</button>
+								<input type="number" class="form-control text-center mx-1" id="numberInput" value="1" style="width: 4rem;">
+						    <button class="btn btn-outline-secondary me-2" type="button" id="increaseBtn">+</button>
+							<button class="btn btn-outline-primary me-2">Add to Cart</button>
+							<button class="btn btn-primary">Buy Now</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="info-section">
+				<div class="description">
+				    <div class="flex mt-2">
+				        <a id="description-tab" class="text-blue-600 border-b-2 border-blue-600 px-4 py-2 cursor-pointer" onclick="showTab('description')">Description</a>
+				        <a id="additional-tab" class="text-gray-600 px-4 py-2 cursor-pointer" onclick="showTab('additional')">Additional Info</a>
+				    </div>
+
+				    <!-- Description Content -->
+				    <div id="description-content" class="mt-2 p-2">
+				        <div th:text="${productPost.description}"></div>
+				    </div>
+
+				    <!-- Additional Info Content -->
+				    <div id="additional-content" class="mt-2 p-2 hidden">
+				        <table style="width: 100%; border-collapse: collapse;">
+							<tr>
+				                <td style="font-weight: 600; white-space: nowrap; width: 1px;">Product Posted At</td>
+				                <td style="font-weight: bold; width: 1%">:</td>
+				                <td><span th:text="${formattedPostedAt}"></span></td>
+				            </tr>
+							<tr>
+				                <td style="font-weight: 600; white-space: nowrap; width: 1px;">Product Posted By</td>
+				                <td style="font-weight: bold; width: 1%">:</td>
+				                <td><span th:text="${productPost.user.profile.shopName}"></span></td>
+				            </tr>
+				            <tr>
+				                <td style="font-weight: 600; white-space: nowrap; width: 1px;">Product GTIN</td>
+				                <td style="font-weight: bold; width: 1%">:</td>
+				                <td><span th:text="${product.gTin}"></span></td>
+				            </tr>
+				            <tr>
+				                <td style="font-weight: 600; white-space: nowrap; width: 1px;">Unit Type</td>
+				                <td style="font-weight: bold; width: 1%">:</td>
+				                <td><span th:text="${product.unitType}"></span></td>
+				            </tr>
+				            <tr>
+				                <td style="font-weight: 600; white-space: nowrap; width: 1px;">Unit Value</td>
+				                <td style="font-weight: bold; width: 1%">:</td>
+				                <td><span th:text="${product.unitValue}"></span></td>
+				            </tr>
+				            <tr>
+				                <td style="font-weight: 600; white-space: nowrap; width: 1px;">Warranty in Months</td>
+				                <td style="font-weight: bold; width: 1%">:</td>
+				                <td><span th:text="${product.warranty}"></span></td>
+				            </tr>
+				            <tr>
+				                <td style="font-weight: 600; white-space: nowrap; width: 1px;">Expiry Date</td>
+				                <td style="font-weight: bold; width: 1%">:</td>
+				                <td><span th:text="${product.expiryDate}"></span></td>
+				            </tr>
+							<tr>
+				                <td style="font-weight: 600; white-space: nowrap; width: 1px;">Availability Type</td>
+				                <td style="font-weight: bold; width: 1%">:</td>
+				                <td><span th:text="${productPost.availabilityType}"></span></td>
+				            </tr>
+				            <tr>
+				                <td style="font-weight: 600; white-space: nowrap; width: 1px;">Bulk Package Type</td>
+				                <td style="font-weight: bold; width: 1%">:</td>
+				                <td><span th:text="${productPost.bulkPackageType}"></span></td>
+				            </tr>
+				        </table>
+				    </div>
+				</div>
+				
+				<h4 class="mt-2 ms-6">Related Products</h4>
+				<div class="flex flex-wrap mt-2">
+					<div th:each="productPost : ${relatedProductsPage.content}" class="w-full md:w-1/4 p-4">
+						<a th:href="@{'/home/productDisplay/' + ${productPost.id}}" class="block">
+							<div class="bg-gray-100 p-4 rounded-lg shadow-lg text-center">
+								<img th:src="@{'/home/product/image/' + ${productPost.productId}}" alt="Product Image"
+									class="card-img rounded-lg" />
+								<h3 class="text-gray-800 text-lg font-bold mt-2" th:text="${productPost.productName}">
+								</h3>
+								<p class="text-gray-600 text-sm mt-2" th:text="'₹' + ${productPost.wholesalePrice * productPost.minOrderQuantity}"></p>
+							</div>
+						</a>
+					</div>
+				</div>
+
+				<h4 class="mt-2 ms-6">New Products</h4>
+				<div class="flex flex-wrap mt-2">
+					<div th:each="productPost : ${newArrivalProductsPage.content}" class="w-full md:w-1/4 p-4">
+						<a th:href="@{'/home/productDisplay/' + ${productPost.id}}" class="block">
+							<div class="bg-gray-100 p-4 rounded-lg shadow-lg text-center">
+								<!-- Product Image -->
+								<img th:src="@{'/home/product/image/' + ${productPost.productId}}" alt="Product Image"
+									class="rounded-lg card-img" />
+
+								<!-- Product Name -->
+								<h3 class="text-gray-800 text-lg font-bold mt-2" th:text="${productPost.productName}">
+								</h3>
+
+								<!-- Product Price -->
+								<p class="text-gray-600 text-sm mt-2" th:text="'₹' + ${productPost.wholesalePrice * productPost.minOrderQuantity}"></p>
+							</div>
+						</a>
+					</div>
+				</div>
+				
+			</div>
+
+		</div>
+		<script src="/main/js/productDetails.js"></script>
+	</section>
+</body>
+
+</html>

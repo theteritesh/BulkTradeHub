@@ -31,5 +31,7 @@ public interface ProductPostRepository extends JpaRepository<ProductPost, Intege
 	
 	@Query("SELECT COUNT(p) FROM ProductPost p WHERE p.user = :user")
 	long countTotalProductsByUser(User user);
+	
+	Page<ProductPost> findByCategoryOrderByPostedAtDesc(String category, Pageable pageable);
 
 }

@@ -60,8 +60,7 @@ private BrandRepository brandRepository;
 	
 	@GetMapping("/getAllUserData")
 	public String getAllUserData(Model model) {		
-		List<User> user=sr.getAllUser();		
-		System.out.println(user);
+		List<User> user=sr.getAllUser();
 		model.addAttribute("userData", user);
 		return "admin/UserData";
 	}
@@ -72,7 +71,6 @@ private BrandRepository brandRepository;
 	public String editUserById(@PathVariable int id, Model model)
 	{
     User userData=userService.findUserById(id);
-    System.out.println(userData);
     model.addAttribute("data", userData);
     return "admin/editUser";
 	}

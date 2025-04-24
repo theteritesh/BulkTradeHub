@@ -123,8 +123,6 @@ public class RetailShopProfileController {
         retailShopProfile.setIfscCode(ifscCode);
         retailShopProfile.setUpiId(upiId);
         retailShopProfile.setPaymentMethods(String.join(",", paymentMethodsList));
-        
-        System.out.println("Profile Img"+profileImg.getBytes());
 
         if(profileImg !=null && !profileImg.isEmpty()) {
         	retailShopProfile.setProfileImg(profileImg.getBytes());
