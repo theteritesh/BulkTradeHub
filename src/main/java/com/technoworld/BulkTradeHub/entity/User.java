@@ -16,9 +16,10 @@ public class User {
 	private String name;
 	private String email;
 	private String password;
+	private boolean verified = false;
 	private String roles;
 	
-	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Profile profile;
 	
 	public int getId() {
@@ -58,10 +59,18 @@ public class User {
 	public void setProfile(Profile profile) {
 		this.profile = profile;
 	}
+	
+	public boolean isVerified() {
+		return verified;
+	}
+	public void setVerified(boolean verified) {
+		this.verified = verified;
+	}
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + ", roles=" + roles
-				+ ", profile=" + profile + "]";
+		return "User [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + ", verified="
+				+ verified + ", roles=" + roles + ", profile=" + profile + "]";
 	}
+
 	
 }

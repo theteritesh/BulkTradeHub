@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:fragment="Layout(content)">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard</title>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+	crossorigin="anonymous">
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/css?family=Inter">
+<link rel="stylesheet" href="/retailshop/css/styles.css">
+</head>
+
+<body>
+	<!-- navbar -->
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+		<div class="container-fluid">
+			<button class="navbar-toggler me-2" type="button"
+				data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample"
+				aria-controls="offcanvasExample">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<a class="navbar-brand fw-bold text-uppercase me-auto" href="#">Admin
+				Dashboard</a>
+			<button class="navbar-toggler" type="button"
+				data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+				aria-controls="navbarSupportedContent" aria-expanded="false"
+				aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+	<!-- Username and Logout aligned to the right -->
+	<div class="d-flex align-items-center ms-auto">
+		<span class="text-white me-3">Hello, <strong>UserName</strong></span>
+		<a th:href="@{/logout}" class="btn btn-outline-light btn-sm">Logout</a>
+	</div>
+
+</div>
+
+		</div>
+	</nav>
+	<!-- navbar -->
+	<!-- Off canvas -->
+	<div
+		class="offcanvas offcanvas-start dashboard-sidebar-nav bg-dark text-white"
+		data-bs-backdrop="false" tabindex="-1" id="offcanvasExample"
+		aria-labelledby="offcanvasExampleLabel">
+		<div class="offcanvas-body p-0">
+			<nav class="navbar-dark">
+				<ul class="navbar-nav">
+					<li>
+						<div class="text-muted small px-3 fw-bold text-uppercase">
+							Core</div>
+					</li>
+					<li><a th:href="@{/admin/dashboard}"
+						class="nav-link px-3 active"> <span class="me-2"> <i
+								class="bi bi-speedometer2"></i>
+						</span> <span>Dashboard</span>
+					</a></li>
+
+
+					<li><a th:href="@{/admin/userManagement}"
+						class="nav-link px-3 active"> <span class="me-2"> <i
+								class="fa-solid fa-users"></i>
+						</span> <span>User Management</span>
+					</a></li>
+
+					<li><a th:href="@{/admin/getAllSalesman}"
+						class="nav-link px-3 active"> <span class="me-2"> <i
+								class="bi bi-table"></i>
+						</span> <span>Product Management</span>
+					</a></li>
+
+
+
+					<li><a href="#" class="nav-link px-3 active"> <span
+							class="me-2"> <i class="fa-solid fa-bolt"></i>
+						</span> <span>Order Management</span>
+					</a></li>
+
+
+					<li><a class="nav-link px-3 sidebar-link active"
+						data-bs-toggle="collapse" href="#collapseExample" role="button"
+						aria-expanded="false" aria-controls="collapseExample"> <span
+							class="me-2"> <i class="fa-solid fa-list"></i>
+						</span> <span>Inventory</span> <span class="right-icon ms-auto"><i
+								class="bi bi-chevron-down"></i></span>
+					</a>
+						<div class="collapse" id="collapseExample">
+							<div>
+								<ul class="navbar-nav ps-3">
+									<li><a th:href="@{/admin/category}"
+										class="nav-link px-3 active"> <span> <i
+												class="fa-solid fa-border-top-left"></i></i></span> <span>Category
+												Requests</span>
+									</a></li>
+									<li><a th:href="@{/admin/brand}"
+										class="nav-link px-3 active"> <span><i
+												class="fa-solid fa-border-top-left"></i></span> <span>Brand
+												Requests</span>
+									</a></li>
+								</ul>
+							</div>
+						</div></li>
+
+					<li><a th:href="@{/admin/contactMessages}"
+						class="nav-link px-3 active"> <span class="me-2"><i
+								class="fa-solid fa-envelope"></i> </span> <span>Contact Requests</span>
+					</a></li>
+					<li><a href="#" class="nav-link px-3 active"> <span
+							class="me-2"> <i class="bi bi-people-fill"></i>
+						</span> <span>Reports & Analytics</span>
+					</a></li>
+
+					<li class="my-4">
+						<hr class="dropdown-divider">
+					</li>
+				</ul>
+
+			</nav>
+		</div>
+	</div>
+	<!-- Off canvas -->
+
+	<!-- main -->
+	<main class="mt-5 pt-3">
+		<div th:replace="${content}"></div>
+	</main>
+
+	<!-- main -->
+
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+		crossorigin="anonymous"></script>
+	<script src="js/script.js"></script>
+</body>
+
+</html>

@@ -141,5 +141,40 @@ public class AdminServiceImplementation {
 
 		}
 	}
+	
+	public List<User> findAllRetailer() {
+		List<User> user = userRepository.findAllRetailUsers();
+		return user;
+	}
 
+	
+	public List<Category> getCategoryByUserId(int id) {
+		List<Category> category = categoryRepository.getUserById(id);
+		return category;
+	}
+	
+	public void deleteCategoryByUserId(int id) {
+		categoryRepository.deleteById(id);
+	}
+	
+	
+	public List<Brand> getBrandByUserId(int id) {
+		List<Brand> category = brandRepository.getUserById(id);
+		return category;
+	}
+	
+	public void deleteBrandByUserId(int id) {
+		brandRepository.deleteById(id);
+	}
+	
+	
+	public List<Product> getProductByUserId(int id){
+		List<Product> lst = productRepository.getProductByUserId(id);
+		return lst;
+	}
+	
+	public void deleteProductByUserId(long id) {
+		productRepository.deleteById(id);
+	}
+	
 }

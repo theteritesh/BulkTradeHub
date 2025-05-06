@@ -1,132 +1,75 @@
 <!DOCTYPE html>
-<html lang="en"xmlns:th=http//www.thymelef.org>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{admin/admindashboardLayout :: Layout(~{::section})}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Retailer Management - BulkThreadHub</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="styles.css">
-    <style>
-        /* Sidebar Styling */
-        #sidebar {
-            width: 250px;
-            transition: all 0.3s ease-in-out;
-            border-right: 2px solid #444;
-        }
-        #sidebar .nav-item {
-            margin-bottom: 5px;
-            padding: 8px;
-            border-radius: 5px;
-            transition: background 0.3s, transform 0.3s;
-        }
-        #sidebar .nav-item:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.05);
-        }
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        /* Page Animations */
-        .card {
-            transition: transform 0.3s ease-in-out;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-        }
-        body {
-            animation: fadeIn 1s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-    </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <div class="container-fluid">
-            <a class="navbar-brand fw-bold" th:href="@{/admin/getAllRetailer}">Retailers Management</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                 <!--    <li class="nav-item"><a class="nav-link" th:href="{/admin/dashboard}">Home</a></li> -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Profile</a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="#">Settings</a></li>
-                            <li><a class="dropdown-item" href="#">Logout</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+	<section>
+	<style>
+   .custom-btn {
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  color: white;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 14px;
+  transition: opacity 0.3s;
+}
 
-    <!-- Sidebar -->
-    <div class="d-flex">
-        <div class="bg-dark text-white p-3 min-vh-100" id="sidebar">
-            <h5 class="text-uppercase">Core</h5>
-            <ul class="nav flex-column">
-                <br>
-                <li class="nav-item"><a class="nav-link text-white" th:href="@{admin/getAllUserData}"><i class="bi bi-people"></i> User Management</a></li>
-                <li class="nav-item"><a class="nav-link text-white"th:href="@{/admin/getAllSalesman}"><i class="bi bi-people"></i> Salesman Management</a></li>
-                <li class="nav-item"><a class="nav-link text-white" href="#"><i class="bi bi-people"></i> Other</a></li>
+.custom-btn:hover {
+  opacity: 0.9;
+}
 
-            </ul>
-        </div>
+  </style>
+		<!-- Main Content -->
+		<div class="container mt-4">
+			<h2 class="mb-3">Retailers</h2>
 
-         <!-- Main Content -->
-         <div class="container mt-4">
-            <h2 class="mb-3">All Users</h2>
-            
-            <div class="mb-3">
-                <input type="text" class="form-control" placeholder="Search Users...">
-            </div>
-            
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>John Doe</td>
-                            <td>johndoe@example.com</td>
-                            <td>Admin</td>
-                            <td>
-                                <a href="#" class="btn btn-sm btn-primary">Edit</a>
-                                <a href="#" class="btn btn-sm btn-danger">Delete</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Jane Smith</td>
-                            <td>janesmith@example.com</td>
-                            <td>Retailer</td>
-                            <td>
-                                <a href="#" class="btn btn-sm btn-primary">Edit</a>
-                                <a href="#" class="btn btn-sm btn-danger">Delete</a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        
+			<div class="table-responsive">
+				<table class="table table-bordered table-hover">
+					<thead class="table-dark">
+						<tr>
+							<th>ID</th>
+							<th>Name</th>
+							<th>Email</th>
+							<th>Category</th>
+							<th>Brand</th>
+							<th>Product</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="user, i : ${user_Retailer}">
+							<td th:text="${i.index + 1}"></td>
+							<td th:text="${user.name}"></td>
+							<td th:text="${user.email}"></td>
+							<!-- <td>
+							<a th:href="@{/admin/categoryById/{id}(id=${user.id})}"
+								class="btn btn-sm btn-info">Category</a></td>
+							<td> -->
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+							<td><a th:href="@{/admin/categoryById/{id}(id=${user.id})}"
+								class="custom-btn">Category</a></td>
+
+
+							<td><a th:href="@{/admin/brandById/{id}(id=${user.id})}"
+								class="custom-btn">Brand</a></td>
+							<td><a
+								th:href="@{/admin/getAllProductByUserId/{id}(id=${user.id})}"
+								class="custom-btn">Product</a></td>
+
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</section>
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

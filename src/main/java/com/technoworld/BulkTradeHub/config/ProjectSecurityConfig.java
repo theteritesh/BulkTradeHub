@@ -7,39 +7,33 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @Configuration
 public class ProjectSecurityConfig {
 	@Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/home/**").permitAll()
-                .requestMatchers("/admin/**").permitAll()            
-                .requestMatchers("/main/**").permitAll()
-                .requestMatchers("/login").permitAll()
-                .requestMatchers("/logout").permitAll()
-                .requestMatchers("/registration").permitAll()
-                .requestMatchers("/retailshop/**").permitAll()
-                .requestMatchers("/dashboard/**").hasRole("RETAIL")
-                .requestMatchers("/retail/**").hasRole("RETAIL")
-                .requestMatchers("/products/**").hasRole("RETAIL")
-                .requestMatchers("/retailShop/**").hasRole("RETAIL")
-            )
-            
-        	.formLogin(form -> form
-                .loginPage("/login")
-                .defaultSuccessUrl("/home", true) 
-                .failureUrl("/login?error=true")
-                .permitAll()
-            )
-            .httpBasic(Customizer.withDefaults())
-            .csrf(Customizer.withDefaults());
-        return httpSecurity.build();
-    }
-	
-	
-    @Bean
-    PasswordEncoder passwordEncoder() {
-    	return new BCryptPasswordEncoder(); 
-    }
+	SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+		httpSecurity
+				.authorizeHttpRequests(auth -> auth.requestMatchers("/home/**").permitAll().requestMatchers("/main/**")
+						.permitAll().requestMatchers("/login").permitAll().requestMatchers("/logout").permitAll()
+						.requestMatchers("/registration").permitAll().requestMatchers("/retailshop/**").permitAll()
+						.requestMatchers("/admin/**").hasRole("ADMIN").requestMatchers("/dashboard/**")
+						.hasRole("RETAIL").requestMatchers("/retail/**").hasRole("RETAIL")
+						.requestMatchers("/products/**").hasRole("RETAIL").requestMatchers("/retailShop/**")
+						.hasRole("RETAIL"))
+				.formLogin(form -> form.loginPage("/login").successHandler(customSuccessHandler())
+						.failureUrl("/login?error=true").permitAll())
+				.httpBasic(Customizer.withDefaults()).csrf(Customizer.withDefaults());
+		return httpSecurity.build();
+	}
+
+	@Bean
+	PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+
+	@Bean
+	AuthenticationSuccessHandler customSuccessHandler() {
+		return new CustomLoginSuccessHandler();
+	}
 }

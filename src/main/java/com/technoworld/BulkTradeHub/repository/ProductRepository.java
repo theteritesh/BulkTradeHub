@@ -62,6 +62,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
 
 	
-		
+	@Query(value = "SELECT * FROM bulktradehub.products WHERE user_id = ?1", nativeQuery = true)
+	List<Product> getProductByUserId(int id);
+	
 }
 

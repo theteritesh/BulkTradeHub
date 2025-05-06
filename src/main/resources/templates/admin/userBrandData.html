@@ -10,36 +10,33 @@
 	<section>
 		<!-- Main Content -->
 		<div class="container mt-4">
-			<h2 class="mb-3">Contact Message</h2>
+			<h2 class="mb-3">Retailer Brand Data</h2>
+
 			<div class="table-responsive">
 				<table class="table table-bordered table-hover">
 					<thead class="table-dark">
 						<tr>
-							<th>Sr.No</th>
+							<th>ID</th>
 							<th>Name</th>
-							<th>Email</th>
-							<th>Subject</th>
-							<th>Message</th>
+							<th>Status</th>
+
 							<th>Actions</th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr th:each="data , no :${messageData}">
-							<td th:text="${no.index+1}"></td>
-							<td th:text="${data.name}"></td>
-							<td th:text="${data.email}"></td>
-							<td th:text="${data.subject}"></td>
-							<td th:text="${data.message}"></td>
-							<td><a
-								th:href="@{/admin/deleteConatctMessage/{id}(id=${data.id})}"
-								class="btn btn-sm btn-danger">Delete</a></td>
 
+						<tr th:each="u ,i:${user}">
+							<td th:text="${i.index + 1}"></td>
+							<td th:text="${u.name}"></td>
+							<td th:text="${u.status}"></td>
+							<td><a
+								th:href="@{/admin/deleteBrandUserById/{id} (id=${u.id})}"
+								class="btn btn-sm btn-danger">Delete Brand</a></td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
 		</div>
-
 	</section>
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>

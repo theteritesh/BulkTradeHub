@@ -75,4 +75,10 @@ public class LoginController {
 		userService.registerUser(user);
 		return "redirect:/login?register=true";
 	}
+	
+	
+	  @GetMapping("/verify")
+	    public String verify(@RequestParam("token") String token) {
+	        return userService.verifyToken(token);
+	    }
 }

@@ -12,4 +12,7 @@ import com.technoworld.BulkTradeHub.entity.User;
 public interface UserRepository extends JpaRepository<User, Integer>{
 
 	User findByEmail(String email);
+	
+    @Query("SELECT u FROM User u WHERE u.roles = 'ROLE_RETAIL'")
+    List<User> findAllRetailUsers();
 }
