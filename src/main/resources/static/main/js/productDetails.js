@@ -73,3 +73,27 @@ const mainImage = document.getElementById("mainProductImage");
   mainImage.addEventListener("mouseleave", () => {
     zoomBox.style.display = "none";
   });
+ 
+ 
+ function addToCart(productPostId) {
+	const quntity=document.getElementById('numberInput').value;
+	 fetch(`/allPermit/addProductToCart?productPostId=${productPostId}&quntity=${quntity}`, {
+	      method: 'GET',
+	      headers: {
+	          'Accept': 'application/json'
+	      }
+	  })
+	  .then(async response => {
+	      if (!response.ok) {
+	          const text = await response.text();
+              throw new Error(text);
+	      }
+	      return response.json();
+	  })
+	  .then(data => {
+	      console.log("Product added to cart successfully.",data);
+	  })
+	  .catch(error => {
+	      console.error("Error: " + error.message);
+	  });
+  }

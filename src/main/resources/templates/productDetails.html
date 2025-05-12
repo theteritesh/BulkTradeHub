@@ -82,10 +82,26 @@
 						</table>
 						<div class="d-flex align-items-center mt-3">
 							<button class="btn btn-outline-secondary" type="button" id="decreaseBtn">-</button>
-								<input type="number" class="form-control text-center mx-1" id="numberInput" value="1" style="width: 4rem;">
+								<input type="number" class="form-control text-center mx-1" id="numberInput" value="1" style="width: 4rem;" readonly>
 						    <button class="btn btn-outline-secondary me-2" type="button" id="increaseBtn">+</button>
-							<button class="btn btn-outline-primary me-2">Add to Cart</button>
-							<button class="btn btn-primary">Buy Now</button>
+							<!-- If user is authenticated -->
+							<div sec:authorize="isAuthenticated()">
+							    <a th:onclick="'addToCart(' + ${productPost.id} + ')'"
+							       class="btn btn-outline-primary me-2">
+							       Add to Cart
+							    </a>
+							    <button class="btn btn-primary">Buy Now</button>
+							</div>
+
+							<!-- If user is not authenticated -->
+							<div sec:authorize="isAnonymous()">
+							    <a th:href="@{/login}" class="btn btn-outline-primary me-2">
+							        Add to Cart
+							    </a>
+							    <a th:href="@{/login}" class="btn btn-primary">
+							        Buy Now
+							    </a>
+							</div>
 						</div>
 					</div>
 				</div>

@@ -27,6 +27,7 @@ import com.technoworld.BulkTradeHub.entity.Product;
 import com.technoworld.BulkTradeHub.entity.ProductPost;
 import com.technoworld.BulkTradeHub.entity.User;
 import com.technoworld.BulkTradeHub.repository.BrandRepository;
+import com.technoworld.BulkTradeHub.repository.CartRepository;
 import com.technoworld.BulkTradeHub.repository.CategoryRepository;
 import com.technoworld.BulkTradeHub.repository.ProductPostRepository;
 import com.technoworld.BulkTradeHub.repository.ProductRepository;
