@@ -1,10 +1,12 @@
 package com.technoworld.BulkTradeHub.entity;
 
+import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 
 @Entity
@@ -22,6 +24,14 @@ public class User {
 	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Profile profile;
 	
+	@OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+	private List<Cart> carts;
+	
+	@OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private VerificationToken verificationToken;
+	
+
+	// Getters and Setters
 	public int getId() {
 		return id;
 	}
@@ -44,9 +54,8 @@ public class User {
 		return roles;
 	}
 	public void setRoles(String roles) {
-		this.roles = "ROLE_"+roles;
+		this.roles = "ROLE_" + roles;
 	}
-	
 	public String getEmail() {
 		return email;
 	}
@@ -59,18 +68,28 @@ public class User {
 	public void setProfile(Profile profile) {
 		this.profile = profile;
 	}
-	
 	public boolean isVerified() {
 		return verified;
 	}
 	public void setVerified(boolean verified) {
 		this.verified = verified;
 	}
+	public List<Cart> getCarts() {
+		return carts;
+	}
+	public void setCarts(List<Cart> carts) {
+		this.carts = carts;
+	}
+	public VerificationToken getVerificationToken() {
+		return verificationToken;
+	}
+	public void setVerificationToken(VerificationToken verificationToken) {
+		this.verificationToken = verificationToken;
+	}
+
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + ", verified="
 				+ verified + ", roles=" + roles + ", profile=" + profile + "]";
 	}
-
-	
 }
