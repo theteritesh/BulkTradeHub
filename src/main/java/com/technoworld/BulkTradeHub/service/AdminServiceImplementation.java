@@ -11,11 +11,13 @@ import org.springframework.stereotype.Service;
 import com.technoworld.BulkTradeHub.entity.Brand;
 import com.technoworld.BulkTradeHub.entity.Category;
 import com.technoworld.BulkTradeHub.entity.Product;
+import com.technoworld.BulkTradeHub.entity.ProductPost;
 import com.technoworld.BulkTradeHub.entity.Profile;
 import com.technoworld.BulkTradeHub.entity.RetailShopProfile;
 import com.technoworld.BulkTradeHub.entity.User;
 import com.technoworld.BulkTradeHub.repository.BrandRepository;
 import com.technoworld.BulkTradeHub.repository.CategoryRepository;
+import com.technoworld.BulkTradeHub.repository.ProductPostRepository;
 import com.technoworld.BulkTradeHub.repository.ProductRepository;
 import com.technoworld.BulkTradeHub.repository.ProfileRepository;
 import com.technoworld.BulkTradeHub.repository.RetailShopProfileRepository;
@@ -25,6 +27,10 @@ import com.technoworld.BulkTradeHub.repository.UserRepository;
 public class AdminServiceImplementation {
 	@Autowired
 	private ProductRepository productRepository;
+	
+	@Autowired
+	private ProductPostRepository productPostRepository;
+	
 	@Autowired
 	private RetailShopProfileRepository retailShopProfileRepository;
 	@Autowired
@@ -146,6 +152,11 @@ public class AdminServiceImplementation {
 		List<User> user = userRepository.findAllRetailUsers();
 		return user;
 	}
+	
+	public List<User> findAllSalemans() {
+		List<User> user = userRepository.findAllSalesamneUsers();
+		return user;
+	}
 
 	
 	public List<Category> getCategoryByUserId(int id) {
@@ -177,4 +188,16 @@ public class AdminServiceImplementation {
 		productRepository.deleteById(id);
 	}
 	
+	public List<Product> getAllProduct(){
+		return productRepository.findAll();
+		
+	}
+	public void deleteProduct(long id) {
+		productRepository.deleteById(id);
+	}
+	
+	public List<ProductPost> postedProducts(){
+		return productPostRepository.findAll();
+		
+	}
 }

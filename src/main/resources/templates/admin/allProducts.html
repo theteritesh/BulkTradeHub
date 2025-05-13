@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{admin/admindashboardLayout :: Layout(~{::section})}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<head>
+</head>
+<body>
+
+	<section>
+		<!-- Main Content -->
+		<div class="container mt-4">
+			<h2 class="mb-3">Products</h2>
+			<div class="table-responsive">
+				<table class="table table-bordered table-hover">
+					<thead class="table-dark">
+						<tr>
+							<th>Sr.No</th>
+							<th>Product Name</th>
+							<th>Image</th>
+							<th>Category</th>
+							<th>Brand</th>
+							<th>Price</th>
+							<th>Quantity</th>
+							<th>G-Tin No</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="data , no :${products}">
+							<td th:text="${no.index+1}"></td>
+							<td th:text="${data.name}"></td>
+							<td><img th:src="'data:image/jpeg;base64,' + ${data.base64MainImage}" width="70" height="65"/></td>
+							<td th:text="${data.category}"></td>
+							<td th:text="${data.brand}"></td>
+							<td th:text="${data.price}"></td>
+							<td th:text="${data.totalQuantity}"></td>
+							<td th:text="${data.gTin}"></td>
+							<td><!-- <a href="#" class="btn btn-sm btn-info">Edit</a> --> 
+							<a th:href="@{/admin/deleteProduct/{id}(id=${data.id})}" class="btn btn-sm btn-danger">Delete</a>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+	</section>
+
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

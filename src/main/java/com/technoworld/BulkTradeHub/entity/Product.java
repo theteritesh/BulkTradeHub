@@ -3,6 +3,7 @@ package com.technoworld.BulkTradeHub.entity;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Base64;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -71,6 +72,8 @@ public class Product {
 	    private LocalDate expiryDate;
 	    private LocalDateTime createdAt;
 	    private LocalDateTime modifiedAt;
+	    
+	    
 	    
 
 		public Long getId() {
@@ -249,6 +252,10 @@ public class Product {
 			this.modifiedAt = modifiedAt;
 		}
 
+		 @Transient
+		    public String getBase64MainImage() {
+		        return mainImage != null ? Base64.getEncoder().encodeToString(mainImage) : "";
+		    }
 		@Override
 		public String toString() {
 			return "Product [id=" + id + ", name=" + name + ", category=" + category + ", brand=" + brand

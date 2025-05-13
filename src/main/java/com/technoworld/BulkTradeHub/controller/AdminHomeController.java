@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +18,7 @@ import com.technoworld.BulkTradeHub.entity.Brand;
 import com.technoworld.BulkTradeHub.entity.Category;
 import com.technoworld.BulkTradeHub.entity.Contact;
 import com.technoworld.BulkTradeHub.entity.Product;
+import com.technoworld.BulkTradeHub.entity.ProductPost;
 import com.technoworld.BulkTradeHub.entity.Profile;
 import com.technoworld.BulkTradeHub.entity.RetailShopProfile;
 import com.technoworld.BulkTradeHub.entity.User;
@@ -46,10 +49,12 @@ public class AdminHomeController {
 
 	@Autowired
 	private BrandRepository brandRepository;
-
+	
 	@GetMapping("/dashboard")
-	public String adminDashboard() {
+	public String adminDashboard(Model model) {
+		
 		return "admin/adminDashboard";
+		
 	}
 
 	@GetMapping("/userManagement")
@@ -192,9 +197,38 @@ public class AdminHomeController {
 		return "redirect:/admin/getAllRetailer";
 	}
 
+
+	
+	
 	@GetMapping("/getAllSalesman")
-	public String salesmanData() {
-		return "admin/SealsManManagement";
+	public String salemansData(Model model) {
+		List<User> user = sr.findAllSalemans();
+		System.out.println(user);
+		model.addAttribute("user_Retailer", user);
+		return "admin/SalesmanManagement";
+	}
+	
+	@GetMapping("/getAllProducts")
+	public String getMethodName(Model model) {
+		
+		List<Product> allProduct=sr.getAllProduct();
+		model.addAttribute("products", allProduct);
+		return "admin/allProducts";
+	}
+	
+	@GetMapping("/postedProducts")
+	public String postedProducts(Model model) {
+		
+		List<ProductPost> postProduct=sr.postedProducts();
+		model.addAttribute("products",postProduct);
+		return "admin/postedProduct";
+	}
+	
+	@GetMapping("/deleteProduct/{id}")
+	public String deleteProduct(@PathVariable long id)
+	{
+	sr.deleteProduct(id);
+	return "redirect:/admin/getAllProducts";
 	}
 
 }

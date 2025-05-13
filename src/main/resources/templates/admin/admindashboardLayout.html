@@ -17,6 +17,43 @@
 <link rel="stylesheet"
 	href="https://fonts.googleapis.com/css?family=Inter">
 <link rel="stylesheet" href="/retailshop/css/styles.css">
+<style>
+	/* Base style */
+	.dashboard-sidebar-nav .nav-link {
+		position: relative;
+		transition: all 0.3s ease;
+		border-left: 3px solid transparent;
+	}
+
+	/* Hover effect */
+	.dashboard-sidebar-nav .nav-link:hover {
+		background-color: #343a40;
+		color: #ffc107 !important;
+		transform: translateX(5px) scale(1.02);
+		border-left: 3px solid #ffc107;
+		box-shadow: inset 5px 0 0 #ffc107;
+	}
+
+	/* Hover effect for icons */
+	.dashboard-sidebar-nav .nav-link:hover i {
+		color: #ffc107 !important;
+		transform: scale(1.1);
+		transition: transform 0.3s ease;
+	}
+
+	/* Optional: smoother animation for inner collapse items too */
+	.dashboard-sidebar-nav .collapse .nav-link {
+		transition: all 0.3s ease;
+	}
+
+	.dashboard-sidebar-nav .collapse .nav-link:hover {
+		background-color: #2c3034;
+		color: #17a2b8 !important;
+		transform: translateX(5px);
+		border-left: 3px solid #17a2b8;
+	}
+</style>
+
 </head>
 
 <body>
@@ -40,7 +77,7 @@
 
 	<!-- Username and Logout aligned to the right -->
 	<div class="d-flex align-items-center ms-auto">
-		<span class="text-white me-3">Hello, <strong>UserName</strong></span>
+		<span class="text-white me-3">Hello, <strong><span th:text="${admin_name}"></span></strong></span>
 		<a th:href="@{/logout}" class="btn btn-outline-light btn-sm">Logout</a>
 	</div>
 
@@ -74,11 +111,37 @@
 						</span> <span>User Management</span>
 					</a></li>
 
-					<li><a th:href="@{/admin/getAllSalesman}"
-						class="nav-link px-3 active"> <span class="me-2"> <i
-								class="bi bi-table"></i>
-						</span> <span>Product Management</span>
-					</a></li>
+				<li>
+    <a class="nav-link px-3 sidebar-link active"
+       data-bs-toggle="collapse"
+       href="#productMenu"
+       role="button"
+       aria-expanded="false"
+       aria-controls="productMenu">
+        <span class="me-2"><i class="fa-solid fa-table"></i></span>
+        <span>Product Management</span>
+        <span class="right-icon ms-auto"><i class="bi bi-chevron-down"></i></span>
+    </a>
+
+    <div class="collapse" id="productMenu">
+        <div>
+            <ul class="navbar-nav ps-3">
+                <li>
+                    <a th:href="@{/admin/getAllProducts}" class="nav-link px-3">
+                        <span><i class="fa-solid fa-box"></i></span>
+                        <span>All Products</span>
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{/admin/postedProducts}" class="nav-link px-3">
+                        <span><i class="fa-solid fa-upload"></i></span>
+                        <span>Posted Products</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</li>
 
 
 
