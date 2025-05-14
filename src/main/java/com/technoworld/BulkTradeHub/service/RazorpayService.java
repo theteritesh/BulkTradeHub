@@ -27,7 +27,7 @@ public class RazorpayService {
         RazorpayClient client = new RazorpayClient(keyId, keySecret);
 
         JSONObject options = new JSONObject();
-        options.put("amount", (int)(amount * 100));
+        options.put("amount", (int)(amount * 10));
         options.put("currency", "INR");
         options.put("receipt", "user_id"+user.getId());
         options.put("payment_capture", true);
