@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{/retailshop/retailLayout :: Layout(~{::section})}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{business/businessLayout :: Layout(~{::section})}">
 
 <head>
 </head>
@@ -18,7 +18,7 @@
 				<h2 class="m-0">Category List</h2>
 				<div class="d-flex ms-auto">
 					<!-- Search Form -->
-					<form class="d-flex" th:action="@{/dashboard/addCategory}" method="get">
+					<form class="d-flex" th:action="@{/business/addCategory}" method="get">
 					    <div class="input-group">
 					        <input type="text" class="form-control" name="query" th:value="${query}" 
 					            placeholder="Search Category..." aria-label="Search Category">
@@ -66,7 +66,7 @@
 							<i class="bi bi-pen me-1"></i> Edit
 						</button>
 
-						<form th:action="@{/retailShop/deleteCategory}" method="post" class="d-inline-block">
+						<form th:action="@{/business/deleteCategory}" method="post" class="d-inline-block">
 						    <input type="hidden" name="id" th:value="${categorie.id}" />
 						    <button type="submit" class="btn btn-danger btn-sm" 
 						        onclick="return confirm('Are you sure you want to send request to delete this category?');">
@@ -91,7 +91,7 @@
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
-					<form id="requestCategoryForm" th:action="@{/retailShop/requestCategory}" method="post"
+					<form id="requestCategoryForm" th:action="@{/business/requestCategory}" method="post"
 						th:object="${category}">
 						<div class="mb-3">
 							<label for="categoryName" class="form-label">Category Name</label>
@@ -115,7 +115,7 @@
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
-					<form id="editCategoryForm" th:action="@{/retailShop/updateCategory}" method="post">
+					<form id="editCategoryForm" th:action="@{/business/updateCategory}" method="post">
 						<!-- Hidden Input for Category ID -->
 						<input type="hidden" id="editCategoryId" name="id">
 

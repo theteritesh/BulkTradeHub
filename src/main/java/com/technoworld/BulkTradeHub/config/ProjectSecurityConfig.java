@@ -15,13 +15,14 @@ public class ProjectSecurityConfig {
 	SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/home/**").permitAll().requestMatchers("/main/**")
-						.permitAll().requestMatchers("/login").permitAll().requestMatchers("/logout").permitAll()
-						.requestMatchers("/registration").permitAll().requestMatchers("/retailshop/**").permitAll()
-						.requestMatchers("/admin/**").hasRole("ADMIN").requestMatchers("/dashboard/**")
-						.hasRole("RETAIL").requestMatchers("/retail/**").hasRole("RETAIL")
-						.requestMatchers("/products/**").hasRole("RETAIL").requestMatchers("/retailShop/**")
-						.hasRole("RETAIL")
+						.requestMatchers("/home/**").permitAll()
+						.requestMatchers("/main/**").permitAll()
+						.requestMatchers("/login").permitAll()
+						.requestMatchers("/logout").permitAll()
+						.requestMatchers("/registration").permitAll()
+						.requestMatchers("/admin/**").hasRole("ADMIN")
+						.requestMatchers("/retailShop/**").hasRole("RETAIL")
+						.requestMatchers("/business/**").hasRole("BUSINESS")
 						.requestMatchers("/allPermit/**").hasAnyRole("RETAIL", "SALESMAN", "BUSINESS")
 						)
 				.formLogin(form -> form.loginPage("/login").successHandler(customSuccessHandler())

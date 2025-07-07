@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{/retailshop/retailLayout :: Layout(~{::section})}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{business/businessLayout :: Layout(~{::section})}">
 
 <head>
 </head>
@@ -34,7 +34,7 @@
 			<div class="d-flex justify-content-between align-items-center mb-3">
 				<h2 class="m-0">Low Stock Product List</h2>
 				<!-- Search Form -->
-				<form class="d-flex ms-auto" th:action="@{/retailShop/searchLowCostProduct}" method="GET">
+				<form class="d-flex ms-auto" th:action="@{/business/searchLowCostProduct}" method="GET">
 					<div class="input-group">
 						<input type="text" class="form-control" name="query" th:value="${query}"
 							placeholder="Search Product..." aria-label="Search Product">
@@ -78,7 +78,7 @@
 						<td th:text="${product.id}"></td>
 						<td>
 							<img th:if="${product.mainImage != null}"
-								th:src="@{/retailShop/productImage/mainImage/{id}(id=${product.id})}" alt="Product Image"
+								th:src="@{/business/productImage/mainImage/{id}(id=${product.id})}" alt="Product Image"
 								class="rounded-circle border" width="80" height="80">
 						</td>
 						<td th:text="${product.gTin}"></td>
@@ -101,7 +101,7 @@
 								th:data-totalQuantity="${product.totalQuantity}" >
 								<i class="bi bi-pen me-1"></i>Edit
 							</button>
-							<a th:href="@{/retailShop/deleteLowStockProduct/{id}(id=${product.id})}" class="btn btn-danger btn-sm"
+							<a th:href="@{/business/deleteLowStockProduct/{id}(id=${product.id})}" class="btn btn-danger btn-sm"
 								onclick="return confirm('Are you sure you want to delete this product?');">
 								<i class="bi bi-trash me-1"></i>Delete
 							</a>
@@ -121,7 +121,7 @@
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
-					<form id="editForm" th:action="@{/retailShop/updateQuantity}" method="post">
+					<form id="editForm" th:action="@{/business/updateProductQuantity}" method="post">
 						<input type="hidden" id="edit-id" name="id">
 
 						<!-- Edit Quantity -->
