@@ -4,10 +4,16 @@ body {
 	font-family: 'Poppins', sans-serif;
 	background-color: #f8f9fa;
 }
-.scrollbar-thin::-webkit-scrollbar {
-  width: 6px;
-}
-.scrollbar-thin::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1;
-  border-radius: 3px;
-}
+.quantity-control .btn-custom-qty {
+    background-color: #ffffff; 
+    border: 1px solid #ffffff;
+    transition: background-color 0.2s ease;
+  }
+
+  .quantity-control .btn-custom-qty:hover {
+    background-color: #ffffff; 
+  }
+
+  .quantity-control .btn-custom-qty:focus {
+    box-shadow: none;
+  }

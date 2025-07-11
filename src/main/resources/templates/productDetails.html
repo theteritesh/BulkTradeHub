@@ -9,6 +9,9 @@
 	<section>
 		<link rel="stylesheet" href="/main/css/productDetails.css">
 		<div class="container py-5">
+			<!-- Only rendered if user is logged in -->
+			<input type="hidden" id="user-logged-in" value="true" sec:authorize="isAuthenticated()" />
+
 			<div class="row g-5 justify-content-center">
 				<div class="d-flex">
 					<!-- Thumbnails on Left -->
@@ -35,7 +38,8 @@
 
 					<!-- Product Details -->
 					<div class="col-md-5">
-						<p style="font-size: 2rem; font-weight: 500;"><span th:text="${productPost.productName}"></span></p>
+						<input type="hidden" th:value="${productPost.id}" id="productPostId"/>
+						<p style="font-size: 2rem; font-weight: 500;"><span id="productName" th:text="${productPost.productName}"></span></p>
 						<p class="text-success" style="font-size: 0.8rem; ">Available Lots
 							 (<span th:text="${productPost.lots}" id="availableLots" th:value="${productPost.lots}"></span>)</p>
 						<div>
@@ -57,51 +61,43 @@
 						    <tr>
 						        <td style=" font-weight: 600; white-space: nowrap; width: 1px;">Brand</td>
 								<td style=" font-weight: bold;">:</td>
-						        <td><span th:text="${productPost.brand}"></span></td>
+						        <td><span id="brandName" th:text="${productPost.brand}"></span></td>
 						    </tr>
 						    <tr>
 						        <td style=" font-weight: 600; white-space: nowrap; width: 1px;">Category</td>
 								<td style=" font-weight: bold;">:</td>
-						        <td ><span th:text="${productPost.category}"></span></td>
+						        <td ><span id="productCategoryName" th:text="${productPost.category}"></span></td>
 						    </tr>
 						    <tr>
 						        <td style=" font-weight: 600; white-space: nowrap; width: 1px;">Products Per Lot</td>
 								<td style=" font-weight: bold;">:</td>
-						        <td ><span th:text="${productPost.minOrderQuantity}"></span></td>
+						        <td ><span id="minOrderQuantity" th:text="${productPost.minOrderQuantity}"></span></td>
 						    </tr>
 						    <tr>
 						        <td style=" font-weight: 600; white-space: nowrap; width: 1px;">Single Product Retail Price</td>
 								<td style=" font-weight: bold;">:</td>
-						        <td ><span th:text="${productPost.retailPrice}"></span></td>
+						        <td ><span id="retailPrice" th:text="${productPost.retailPrice}"></span></td>
 						    </tr>
 						    <tr>
 						        <td style=" font-weight: 600; white-space: nowrap; width: 1px;">Single Product Wholesale Price</td>
 								<td style=" font-weight: bold;">:</td>
-						        <td><span th:text="${productPost.wholesalePrice}"></span></td>
+						        <td><span id="wholesalePrice" th:text="${productPost.wholesalePrice}"></span></td>
 						    </tr>
 						</table>
 						<div class="d-flex align-items-center mt-3">
 							<button class="btn btn-outline-secondary" type="button" id="decreaseBtn">-</button>
 								<input type="number" class="form-control text-center mx-1" id="numberInput" value="1" style="width: 4rem;" readonly>
 						    <button class="btn btn-outline-secondary me-2" type="button" id="increaseBtn">+</button>
-							<!-- If user is authenticated -->
-							<div sec:authorize="isAuthenticated()">
-							    <a th:onclick="'addToCart(' + ${productPost.id} + ')'"
-							       class="btn btn-outline-primary me-2">
-							       Add to Cart
-							    </a>
-							    <button class="btn btn-primary">Buy Now</button>
-							</div>
-
-							<!-- If user is not authenticated -->
-							<div sec:authorize="isAnonymous()">
-							    <a th:href="@{/login}" class="btn btn-outline-primary me-2">
+							
+							<div>
+							    <a class="btn btn-outline-primary me-2" id="addToCartBtn" onclick="addToCart()">
 							        Add to Cart
 							    </a>
-							    <a th:href="@{/login}" class="btn btn-primary">
+							    <a class="btn btn-primary">
 							        Buy Now
 							    </a>
 							</div>
+							
 						</div>
 					</div>
 				</div>
@@ -172,39 +168,10 @@
 				</div>
 				
 				<h4 class="mt-2 ms-6">Related Products</h4>
-				<div class="flex flex-wrap mt-2">
-					<div th:each="productPost : ${relatedProductsPage.content}" class="w-full md:w-1/4 p-4">
-						<a th:href="@{'/home/productDisplay/' + ${productPost.id}}" class="block">
-							<div class="bg-gray-100 p-4 rounded-lg shadow-lg text-center">
-								<img th:src="@{'/home/product/image/' + ${productPost.productId}}" alt="Product Image"
-									class="card-img rounded-lg" />
-								<h3 class="text-gray-800 text-lg font-bold mt-2" th:text="${productPost.productName}">
-								</h3>
-								<p class="text-gray-600 text-sm mt-2" th:text="'₹' + ${productPost.wholesalePrice * productPost.minOrderQuantity}"></p>
-							</div>
-						</a>
-					</div>
-				</div>
+				<div class="flex flex-wrap mt-2" id="related-products"></div>
 
 				<h4 class="mt-2 ms-6">New Products</h4>
-				<div class="flex flex-wrap mt-2">
-					<div th:each="productPost : ${newArrivalProductsPage.content}" class="w-full md:w-1/4 p-4">
-						<a th:href="@{'/home/productDisplay/' + ${productPost.id}}" class="block">
-							<div class="bg-gray-100 p-4 rounded-lg shadow-lg text-center">
-								<!-- Product Image -->
-								<img th:src="@{'/home/product/image/' + ${productPost.productId}}" alt="Product Image"
-									class="rounded-lg card-img" />
-
-								<!-- Product Name -->
-								<h3 class="text-gray-800 text-lg font-bold mt-2" th:text="${productPost.productName}">
-								</h3>
-
-								<!-- Product Price -->
-								<p class="text-gray-600 text-sm mt-2" th:text="'₹' + ${productPost.wholesalePrice * productPost.minOrderQuantity}"></p>
-							</div>
-						</a>
-					</div>
-				</div>
+				<div class="flex flex-wrap mt-2" id="new-products"></div>
 				
 			</div>
 

@@ -18,45 +18,35 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "product_post_id")
-    private ProductPost productPost;
-
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
-    
+    private int userId;
+    private int productPostId;
+    private int productId;
     private int quantity;
     private LocalDateTime addedAt;
     private Boolean status;
-    
 	public int getId() {
 		return id;
 	}
 	public void setId(int id) {
 		this.id = id;
 	}
-	public User getUser() {
-		return user;
+	public int getUserId() {
+		return userId;
 	}
-	public void setUser(User user) {
-		this.user = user;
+	public void setUserId(int userId) {
+		this.userId = userId;
 	}
-	public ProductPost getProductPost() {
-		return productPost;
+	public int getProductPostId() {
+		return productPostId;
 	}
-	public void setProductPost(ProductPost productPost) {
-		this.productPost = productPost;
+	public void setProductPostId(int productPostId) {
+		this.productPostId = productPostId;
 	}
-	public Product getProduct() {
-		return product;
+	public int getProductId() {
+		return productId;
 	}
-	public void setProduct(Product product) {
-		this.product = product;
+	public void setProductId(int productId) {
+		this.productId = productId;
 	}
 	public int getQuantity() {
 		return quantity;
@@ -78,7 +68,7 @@ public class Cart {
 	}
 	@Override
 	public String toString() {
-		return "Cart [id=" + id + ", user=" + user + ", productPost=" + productPost + ", product=" + product
+		return "Cart [id=" + id + ", userId=" + userId + ", productPostId=" + productPostId + ", productId=" + productId
 				+ ", quantity=" + quantity + ", addedAt=" + addedAt + ", status=" + status + "]";
 	}
 }

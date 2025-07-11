@@ -47,6 +47,8 @@ function showTab(tabName) {
     }
 }
 
+
+
 const mainImage = document.getElementById("mainProductImage");
   const zoomBox = document.getElementById("zoom-box");
 
@@ -75,25 +77,84 @@ const mainImage = document.getElementById("mainProductImage");
   });
  
  
- function addToCart(productPostId) {
-	const quntity=document.getElementById('numberInput').value;
-	 fetch(`/allPermit/addProductToCart?productPostId=${productPostId}&quntity=${quntity}`, {
-	      method: 'GET',
-	      headers: {
-	          'Accept': 'application/json'
-	      }
-	  })
-	  .then(async response => {
-	      if (!response.ok) {
-	          const text = await response.text();
-              throw new Error(text);
-	      }
-	      return response.json();
-	  })
-	  .then(data => {
-	      console.log("Product added to cart successfully.",data);
-	  })
-	  .catch(error => {
-	      console.error("Error: " + error.message);
-	  });
+  document.addEventListener('DOMContentLoaded', function () {
+    const category = document.getElementById("productCategoryName")?.innerText || '';
+    if (category) loadRelatedAndNew(category);
+  });
+
+  function loadRelatedAndNew(category) {
+    fetch(`/home/productPost/related-and-new?category=${encodeURIComponent(category)}`)
+      .then(res => res.json())
+      .then(data => {
+        renderProductList(data.related, document.getElementById("related-products"));
+        renderProductList(data.new, document.getElementById("new-products"));
+      })
+      .catch(err => console.error("Error loading product posts: ", err));
   }
+
+  function renderProductList(products, container) {
+    if (!container) return;
+    container.innerHTML = "";
+    products.forEach(product => {
+      const card = document.createElement('div');
+      card.className = "w-full md:w-1/4 p-4";
+      card.innerHTML = `
+        <a href="/home/productDisplay/${product.id}" class="block">
+          <div class="bg-gray-100 p-4 rounded-lg shadow-lg text-center">
+            <img src="${product.base64Image}" class="rounded-lg card-img" alt="Product Image" />
+            <h3 class="text-gray-800 text-lg font-bold mt-2">${product.productName}</h3>
+            <p class="text-gray-600 text-sm mt-2">₹${product.wholesalePrice * product.minOrderQuantity}</p>
+          </div>
+        </a>
+      `;
+      container.appendChild(card);
+    });
+  }
+  
+  
+  function addToCart(){
+	const quantityInput = document.getElementById('numberInput');
+	const isUserLoggedIn = document.getElementById('user-logged-in') !== null;
+	
+	if(!isUserLoggedIn){
+		
+		  const productPostId = parseInt(document.getElementById("productPostId").value);
+		  const productName = document.getElementById("productName").innerText;
+		  const quantity = parseInt(quantityInput.value);
+		  const wholesalePrice = parseInt(document.getElementById("wholesalePrice").innerText);
+		  const retailPrice = parseInt(document.getElementById("retailPrice").innerText);
+		  const minOrderQuantity = parseInt(document.getElementById("minOrderQuantity").innerText);
+		  const category=document.getElementById("productCategoryName").innerText;
+		  const brand=document.getElementById("brandName").innerText;
+		  const availableLots=parseInt(document.getElementById("availableLots").innerText);
+		  const base64Image  = document.getElementById('mainProductImage').src;
+
+		  const product = {
+		      productPostId,
+		      productName,
+		      quantity,
+		      wholesalePrice,
+			  retailPrice,
+		      minOrderQuantity,
+			  category,
+			  brand,
+			  availableLots,
+		      image: base64Image,
+		      addedAt: new Date().toISOString()
+		  };
+
+		  // Get current cart
+		  let cart = JSON.parse(localStorage.getItem('guestCart')) || [];
+		  console.log("Cart : ",cart);
+
+		  // Check if product already in cart
+		  const existing = cart.find(item => item.productPostId === productPostId);
+		  if (existing) {
+		      existing.quantity += quantity;
+		  } else {
+		      cart.push(product);
+		  }
+		  localStorage.setItem('guestCart', JSON.stringify(cart));
+		  updateCartCount();
+		}
+	}

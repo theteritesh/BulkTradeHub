@@ -525,7 +525,7 @@ public class RetailController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Failed to delete product.");
         }
-        return "redirect:/dashboard/showPost";
+        return "redirect:/retailShop/showPost";
     }
     
 	 @GetMapping("/searchLowCostProduct")

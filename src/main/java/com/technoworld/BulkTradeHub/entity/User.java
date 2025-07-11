@@ -24,9 +24,6 @@ public class User {
 	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Profile profile;
 	
-	@OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
-	private List<Cart> carts;
-	
 	@OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private VerificationToken verificationToken;
 	
@@ -73,12 +70,6 @@ public class User {
 	}
 	public void setVerified(boolean verified) {
 		this.verified = verified;
-	}
-	public List<Cart> getCarts() {
-		return carts;
-	}
-	public void setCarts(List<Cart> carts) {
-		this.carts = carts;
 	}
 	public VerificationToken getVerificationToken() {
 		return verificationToken;

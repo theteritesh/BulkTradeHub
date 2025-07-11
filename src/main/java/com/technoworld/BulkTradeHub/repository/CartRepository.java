@@ -11,9 +11,9 @@ import com.technoworld.BulkTradeHub.entity.User;
 
 public interface CartRepository extends JpaRepository<Cart, Integer> {
 
-	Optional<Cart> findByUserAndProductPost(User user, ProductPost productPost);
-
-	List<Cart> findByUserAndStatusOrderByAddedAtDesc(User user, Boolean status);
+//	Optional<Cart> findByUserAndProductPost(User user, ProductPost productPost);
+//
+//	List<Cart> findByUserAndStatusOrderByAddedAtDesc(User user, Boolean status);
 
 
 }

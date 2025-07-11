@@ -24,6 +24,7 @@ import com.technoworld.BulkTradeHub.entity.RetailShopProfile;
 import com.technoworld.BulkTradeHub.entity.User;
 import com.technoworld.BulkTradeHub.repository.BrandRepository;
 import com.technoworld.BulkTradeHub.repository.CategoryRepository;
+import com.technoworld.BulkTradeHub.repository.ProductPostRepository;
 import com.technoworld.BulkTradeHub.repository.UserRepository;
 import com.technoworld.BulkTradeHub.service.AdminServiceImplementation;
 import com.technoworld.BulkTradeHub.service.ContactService;
@@ -49,6 +50,9 @@ public class AdminHomeController {
 
 	@Autowired
 	private BrandRepository brandRepository;
+	
+	@Autowired
+	private ProductPostRepository productPostRepository;
 	
 	@GetMapping("/dashboard")
 	public String adminDashboard(Model model) {
@@ -229,6 +233,12 @@ public class AdminHomeController {
 	{
 	sr.deleteProduct(id);
 	return "redirect:/admin/getAllProducts";
+	}
+	
+	@GetMapping("/deletePostProduct/{id}")
+	public String deleteProductPost(@PathVariable int id) {
+		productPostRepository.deleteById(id);
+		return "redirect:/admin/postedProducts";
 	}
 
 }
