@@ -6,8 +6,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -20,10 +18,10 @@ public class Cart {
     
     private int userId;
     private int productPostId;
-    private int productId;
+    private long productId;
     private int quantity;
     private LocalDateTime addedAt;
-    private Boolean status;
+    
 	public int getId() {
 		return id;
 	}
@@ -42,10 +40,10 @@ public class Cart {
 	public void setProductPostId(int productPostId) {
 		this.productPostId = productPostId;
 	}
-	public int getProductId() {
+	public long getProductId() {
 		return productId;
 	}
-	public void setProductId(int productId) {
+	public void setProductId(long productId) {
 		this.productId = productId;
 	}
 	public int getQuantity() {
@@ -60,15 +58,10 @@ public class Cart {
 	public void setAddedAt(LocalDateTime addedAt) {
 		this.addedAt = addedAt;
 	}
-	public Boolean getStatus() {
-		return status;
-	}
-	public void setStatus(Boolean status) {
-		this.status = status;
-	}
+	
 	@Override
 	public String toString() {
 		return "Cart [id=" + id + ", userId=" + userId + ", productPostId=" + productPostId + ", productId=" + productId
-				+ ", quantity=" + quantity + ", addedAt=" + addedAt + ", status=" + status + "]";
+				+ ", quantity=" + quantity + ", addedAt=" + addedAt + "]";
 	}
 }

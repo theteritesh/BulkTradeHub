@@ -3,6 +3,10 @@ const container = document.getElementById('product-container');
 const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
 
+window.onload=function(){
+	loadProducts(currentPage);
+};
+
 async function loadProducts(page) {
     const res = await fetch(`/home/productPost?page=${page}`);
     const data = await res.json();
@@ -39,5 +43,3 @@ prevBtn.addEventListener('click', () => {
 nextBtn.addEventListener('click', () => {
     loadProducts(currentPage + 1);
 });
-
-loadProducts(currentPage);

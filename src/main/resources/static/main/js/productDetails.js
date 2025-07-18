@@ -112,49 +112,74 @@ const mainImage = document.getElementById("mainProductImage");
   }
   
   
-  function addToCart(){
-	const quantityInput = document.getElementById('numberInput');
-	const isUserLoggedIn = document.getElementById('user-logged-in') !== null;
-	
-	if(!isUserLoggedIn){
-		
-		  const productPostId = parseInt(document.getElementById("productPostId").value);
-		  const productName = document.getElementById("productName").innerText;
-		  const quantity = parseInt(quantityInput.value);
-		  const wholesalePrice = parseInt(document.getElementById("wholesalePrice").innerText);
-		  const retailPrice = parseInt(document.getElementById("retailPrice").innerText);
-		  const minOrderQuantity = parseInt(document.getElementById("minOrderQuantity").innerText);
-		  const category=document.getElementById("productCategoryName").innerText;
-		  const brand=document.getElementById("brandName").innerText;
-		  const availableLots=parseInt(document.getElementById("availableLots").innerText);
-		  const base64Image  = document.getElementById('mainProductImage').src;
+  async function addToCart() {
+  	const quantityInput = document.getElementById('numberInput');
+  	const isUserLoggedIn = document.getElementById('user-logged-in') !== null;
 
-		  const product = {
-		      productPostId,
-		      productName,
-		      quantity,
-		      wholesalePrice,
-			  retailPrice,
-		      minOrderQuantity,
-			  category,
-			  brand,
-			  availableLots,
-		      image: base64Image,
-		      addedAt: new Date().toISOString()
-		  };
+  	const productPostId = parseInt(document.getElementById("productPostId").value);
+  	const productName = document.getElementById("productName").innerText;
+  	const quantity = parseInt(quantityInput.value);
+  	const wholesalePrice = parseInt(document.getElementById("wholesalePrice").innerText);
+  	const retailPrice = parseInt(document.getElementById("retailPrice").innerText);
+  	const minOrderQuantity = parseInt(document.getElementById("minOrderQuantity").innerText);
+  	const category = document.getElementById("productCategoryName").innerText;
+  	const brand = document.getElementById("brandName").innerText;
+  	const availableLots = parseInt(document.getElementById("availableLots").innerText);
+  	const base64Image = document.getElementById('mainProductImage').src;
 
-		  // Get current cart
-		  let cart = JSON.parse(localStorage.getItem('guestCart')) || [];
-		  console.log("Cart : ",cart);
+  	const product = {
+  		productPostId,
+  		productName,
+  		quantity,
+  		wholesalePrice,
+  		retailPrice,
+  		minOrderQuantity,
+  		category,
+  		brand,
+  		availableLots,
+  		image: base64Image,
+  		addedAt: new Date().toISOString()
+  	};
 
-		  // Check if product already in cart
-		  const existing = cart.find(item => item.productPostId === productPostId);
-		  if (existing) {
-		      existing.quantity += quantity;
-		  } else {
-		      cart.push(product);
-		  }
-		  localStorage.setItem('guestCart', JSON.stringify(cart));
-		  updateCartCount();
-		}
-	}
+  	if (!isUserLoggedIn) {
+  		// Guest user: Save to localStorage
+  		let cart = JSON.parse(localStorage.getItem('guestCart')) || [];
+  		const existing = cart.find(item => item.productPostId === productPostId);
+  		if (existing) {
+  			existing.quantity += quantity;
+  		} else {
+  			cart.push(product);
+  		}
+  		localStorage.setItem('guestCart', JSON.stringify(cart));
+  		updateCartCount();
+  	} else {
+  		// Logged-in user: Save to DB via backend
+  		try {
+  			const response = await fetch("/home/cart/add", {
+  				method: "POST",
+  				headers: {
+  					'Content-Type': 'application/json',
+  					[csrfHeader]: csrfToken
+  				},
+  				body: JSON.stringify({
+  					productPostId: product.productPostId,
+  					quantity: product.quantity,
+  					addedAt: product.addedAt
+  				})
+  			});
+
+  			if (!response.ok) {
+  				const errorMsg = await response.text();
+  				console.error("Server error:", errorMsg);
+  				alert("Failed to add product to cart.");
+  				return;
+  			}
+
+  			updateCartCount();
+  		} catch (error) {
+  			console.error("Error adding to cart:", error);
+  			alert("An error occurred. Please try again.");
+  		}
+  	}
+  }
+

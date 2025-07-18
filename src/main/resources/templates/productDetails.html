@@ -9,8 +9,7 @@
 	<section>
 		<link rel="stylesheet" href="/main/css/productDetails.css">
 		<div class="container py-5">
-			<!-- Only rendered if user is logged in -->
-			<input type="hidden" id="user-logged-in" value="true" sec:authorize="isAuthenticated()" />
+			
 
 			<div class="row g-5 justify-content-center">
 				<div class="d-flex">
@@ -126,7 +125,15 @@
 							<tr>
 				                <td style="font-weight: 600; white-space: nowrap; width: 1px;">Product Posted By</td>
 				                <td style="font-weight: bold; width: 1%">:</td>
-				                <td><span th:text="${productPost.user.profile.shopName}"></span></td>
+								<td>
+								 <!-- <span th:if="${productPost.user.profile instanceof T(com.technoworld.BulkTradeHub.entity.RetailShopProfile)}"
+								        th:text="${#casts.cast(productPost.user.profile, T(com.technoworld.BulkTradeHub.entity.RetailShopProfile)).shopName}">
+								  </span>-->
+
+								  <!--<span th:if="${productPost.user.profile instanceof T(com.technoworld.BulkTradeHub.entity.BusinessProfile)}"
+								        th:text="${#casts.cast(productPost.user.profile, T(com.technoworld.BulkTradeHub.entity.BusinessProfile)).businessName}">
+								  </span>-->
+								</td>
 				            </tr>
 				            <tr>
 				                <td style="font-weight: 600; white-space: nowrap; width: 1px;">Product GTIN</td>

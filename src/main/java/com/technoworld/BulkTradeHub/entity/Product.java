@@ -38,7 +38,6 @@ public class Product {
 	    @JoinColumn(name = "user_id", nullable = false)
 	    private User user;
 	    
-	    @JsonIgnore
 	    @Lob
 	    @Column(columnDefinition = "LONGBLOB") 
 	    private byte[] mainImage;

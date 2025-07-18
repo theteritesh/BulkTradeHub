@@ -3,6 +3,7 @@ package com.technoworld.BulkTradeHub.controller;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +37,7 @@ import com.technoworld.BulkTradeHub.entity.User;
 import com.technoworld.BulkTradeHub.repository.CartRepository;
 import com.technoworld.BulkTradeHub.repository.ProductPostRepository;
 import com.technoworld.BulkTradeHub.repository.ProductRepository;
+import com.technoworld.BulkTradeHub.repository.UserRepository;
 import com.technoworld.BulkTradeHub.service.ContactService;
 
 
@@ -52,6 +54,8 @@ public class HomeController {
 	@Autowired 
 	private ContactService contactService;
 	
+	@Autowired
+	private CartRepository cartRepository;
 	
 	@GetMapping("")
     public String displayHome() {
@@ -202,6 +206,247 @@ public class HomeController {
 	@GetMapping("/getCart")
 	public String getCart() {
 		return "cart";
+	}
+	
+	@PostMapping("/mergeGuestCart")
+	public ResponseEntity<?> mergeGuestCart(@RequestBody List<Map<String, Object>> guestItems,Principal principal){
+		User user =  (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+		
+		
+		for (Map<String, Object> item : guestItems) {
+	        Integer productPostId = (Integer) item.get("productPostId");
+	        Integer quantity = (Integer) item.get("quantity");
+	        String addedAt = (String) item.get("addedAt");
+	        
+	        LocalDateTime addedDateTime = LocalDateTime.parse(addedAt, DateTimeFormatter.ISO_DATE_TIME);
+
+	        ProductPost productPost = productPostRepository.findById(productPostId)
+	                .orElseThrow(() -> new RuntimeException("ProductPost not found: " + productPostId));
+
+	        // Save into Cart table
+	        Cart cartItem = new Cart();
+	        cartItem.setUserId(user.getId());
+	        cartItem.setProductPostId(productPostId);
+	        cartItem.setProductId(productPost.getProductId());
+	        cartItem.setQuantity(quantity);
+	        cartItem.setAddedAt(addedDateTime);
+
+	        Cart existing = cartRepository.findByUserIdAndProductPostId(user.getId(), productPostId);
+	        if (existing != null) {
+	            existing.setQuantity(existing.getQuantity() + quantity);
+	            existing.setAddedAt(addedDateTime);
+	            cartRepository.save(existing);
+	        } else {
+	            cartRepository.save(cartItem);
+	        }
+
+	        
+	    }
+		return ResponseEntity.ok().build();
+	}
+	
+	@GetMapping("/getLoggedInUserCart")
+	@ResponseBody
+	public ResponseEntity<?> getLoggedInUserCart(Principal principal) {
+	    try {
+	        // Ensure user is authenticated
+	        if (principal == null) {
+	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+	                    .body("User not authenticated");
+	        }
+
+	        User user = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+
+	        // Fetch cart items from native query
+	        List<Object[]> results = cartRepository.findCartItemsWithDetails(user.getId());
+
+	        // Transform Object[] results to a List of Maps (JSON-compatible)
+	        List<Map<String, Object>> cartItems = new ArrayList<>();
+
+	        for (Object[] row : results) {
+	            Map<String, Object> item = new HashMap<>();
+	            item.put("productPostId", row[0]);
+	            item.put("quantity", row[1]);
+	            item.put("addedAt", row[2]);
+	            item.put("productName", row[3]);
+	            item.put("wholesalePrice", row[4]);
+	            item.put("retailPrice", row[5]);
+	            item.put("minOrderQuantity", row[6]);
+	            item.put("availableLots", row[7]);
+	            item.put("category", row[8]);
+	            item.put("brand", row[9]);
+	            String base64Image = row[10] != null
+	            	    ? "data:image/jpeg;base64," + Base64.getEncoder().encodeToString((byte[]) row[10])
+	            	    : null;
+	            item.put("mainImageBase64", base64Image);
+	            item.put("cartId", row[11]);
+	            item.put("sellerName", row[12]);
+	            cartItems.add(item);
+	        }
+
+	        return ResponseEntity.ok(cartItems);
+
+	    } catch (Exception ex) {
+	        ex.printStackTrace(); // Optional: Log it with logger
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                .body("An error occurred while fetching cart items.");
+	    }
+	}
+	
+	@PostMapping("/cart/delete/{id}")
+	@ResponseBody
+	public ResponseEntity<?> deleteCartItem(@PathVariable("id") int id, Principal principal) {
+	    try {
+	        User user = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+	        Optional<Cart> optionalCart = cartRepository.findById(id);
+
+	        if (optionalCart.isEmpty()) {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cart item not found");
+	        }
+
+	        Cart cart = optionalCart.get();
+
+	        if (cart.getUserId() != user.getId()) {
+	            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized to delete this cart item");
+	        }
+
+	        cartRepository.deleteById(id);
+	        return ResponseEntity.ok(cart); // 🔁 Send deleted cart back
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete cart item");
+	    }
+	}
+
+	@PostMapping("/cart/increase/{id}")
+	@ResponseBody
+	public ResponseEntity<?> increaseCartItem(@PathVariable("id") int id, Principal principal) {
+	    try {
+	        if (principal == null) {
+	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
+	        }
+
+	        User user = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+
+	        Optional<Cart> optionalCart = cartRepository.findById(id);
+	        if (optionalCart.isEmpty()) {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cart item not found");
+	        }
+
+	        Cart cart = optionalCart.get();
+
+	        // Check ownership
+	        if (cart.getUserId() != user.getId()) {
+	            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized access to cart item");
+	        }
+
+	        ProductPost productPost = productPostRepository.findById(cart.getProductPostId()).get();
+	        int maxLots = productPost.getLots();
+	        if (cart.getQuantity() >= maxLots) {
+	            return ResponseEntity.badRequest().body("No more lots available to increase");
+	        }
+
+	        // Increase quantity
+	        cart.setQuantity(cart.getQuantity() + 1);
+	        Cart updatedCart = cartRepository.save(cart);
+
+	        return ResponseEntity.ok(updatedCart);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                .body("Failed to increase cart item quantity");
+	    }
+	}
+	
+	@PostMapping("/cart/decrease/{id}")
+	@ResponseBody
+	public ResponseEntity<?> decreaseCartItem(@PathVariable("id") int id, Principal principal) {
+	    try {
+	        User user = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+	        Optional<Cart> optionalCart = cartRepository.findById(id);
+
+	        if (optionalCart.isEmpty()) {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cart item not found");
+	        }
+
+	        Cart cart = optionalCart.get();
+
+	        if (cart.getUserId() != user.getId()) {
+	            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized to modify this cart item");
+	        }
+
+	        if (cart.getQuantity() <= 1) {
+	            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Minimum quantity reached");
+	        }
+
+	        cart.setQuantity(cart.getQuantity() - 1);
+	        Cart updatedCart = cartRepository.save(cart);
+	        
+	        return ResponseEntity.ok(updatedCart);
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to decrease cart item");
+	    }
+	}
+
+	@PostMapping("/cart/clear")
+	@ResponseBody
+	public ResponseEntity<?> clearCart(Principal principal) {
+	    try {
+	        User user = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+	        int userId = user.getId();
+	        cartRepository.deleteAllByUserId(userId);
+
+	        return ResponseEntity.ok("Cart cleared");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                             .body("Failed to clear cart");
+	    }
+	}
+
+	@PostMapping("/cart/add")
+	public ResponseEntity<?> addToCart(@RequestBody Map<String, Object> item, Principal principal) {
+	    User user = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+
+	    Integer productPostId = (Integer) item.get("productPostId");
+	    Integer quantity = (Integer) item.get("quantity");
+	    String addedAt = (String) item.get("addedAt");
+
+	    LocalDateTime addedDateTime = LocalDateTime.parse(addedAt, DateTimeFormatter.ISO_DATE_TIME);
+
+	    ProductPost productPost = productPostRepository.findById(productPostId)
+	            .orElseThrow(() -> new RuntimeException("ProductPost not found: " + productPostId));
+
+	    Cart existing = cartRepository.findByUserIdAndProductPostId(user.getId(), productPostId);
+	    if (existing != null) {
+	        existing.setQuantity(existing.getQuantity() + quantity);
+	        existing.setAddedAt(addedDateTime);
+	        cartRepository.save(existing);
+	    } else {
+	        Cart cartItem = new Cart();
+	        cartItem.setUserId(user.getId());
+	        cartItem.setProductPostId(productPostId);
+	        cartItem.setProductId(productPost.getProductId());
+	        cartItem.setQuantity(quantity);
+	        cartItem.setAddedAt(addedDateTime);
+	        cartRepository.save(cartItem);
+	    }
+
+	    return ResponseEntity.ok().build();
+	}
+
+	@GetMapping("/cart/count")
+	@ResponseBody
+	public ResponseEntity<Map<String, Integer>> getCartItemCount(Principal principal) {
+		User user = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+	    if (user == null) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("count", 0));
+	    }
+
+	    int count = cartRepository.countByUserId(user.getId());
+	    return ResponseEntity.ok(Map.of("count", count));
 	}
 
 }
