@@ -1,5 +1,6 @@
 package com.technoworld.BulkTradeHub.controller;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -9,16 +10,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.codec.Hex;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,15 +35,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.razorpay.Order;
+import com.razorpay.RazorpayClient;
+import com.razorpay.RazorpayException;
 import com.technoworld.BulkTradeHub.entity.Cart;
 import com.technoworld.BulkTradeHub.entity.Contact;
 import com.technoworld.BulkTradeHub.entity.Product;
 import com.technoworld.BulkTradeHub.entity.ProductPost;
+import com.technoworld.BulkTradeHub.entity.RazorpayCredentials;
 import com.technoworld.BulkTradeHub.entity.User;
 import com.technoworld.BulkTradeHub.repository.CartRepository;
 import com.technoworld.BulkTradeHub.repository.ProductPostRepository;
 import com.technoworld.BulkTradeHub.repository.ProductRepository;
-import com.technoworld.BulkTradeHub.repository.UserRepository;
+import com.technoworld.BulkTradeHub.repository.RazorpayCredentialsRepository;
 import com.technoworld.BulkTradeHub.service.ContactService;
 
 
@@ -56,6 +66,9 @@ public class HomeController {
 	
 	@Autowired
 	private CartRepository cartRepository;
+	
+	@Autowired
+	private RazorpayCredentialsRepository razorpayCredentialsRepository;
 	
 	@GetMapping("")
     public String displayHome() {
@@ -448,5 +461,91 @@ public class HomeController {
 	    int count = cartRepository.countByUserId(user.getId());
 	    return ResponseEntity.ok(Map.of("count", count));
 	}
+	
+	@PostMapping("/create-razorpay-order")
+	public ResponseEntity<?> createOrder(@RequestBody Map<String, Object> request, Principal principal) throws RazorpayException {
+		User user = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+		Optional<RazorpayCredentials> razorPayOptional = razorpayCredentialsRepository.findById(1);
 
+		if (razorPayOptional.isEmpty()) {
+			return ResponseEntity.ok("Please contact admin!");
+		}
+
+		RazorpayCredentials razorpayCredentials = razorPayOptional.get();
+		RazorpayClient razorpay = new RazorpayClient(razorpayCredentials.getKeyId(), razorpayCredentials.getKeySecret());
+
+		double amount = Double.parseDouble(request.get("amount").toString());
+
+		JSONObject orderRequest = new JSONObject();
+		orderRequest.put("amount", (int) (amount * 100)); // paise
+		orderRequest.put("currency", "INR");
+		orderRequest.put("receipt", UUID.randomUUID().toString());
+
+		Order order = razorpay.orders.create(orderRequest);
+
+		Map<String, Object> response = new HashMap<>();
+		response.put("orderId", order.get("id"));
+		response.put("amount", order.get("amount"));
+		response.put("currency", order.get("currency"));
+		response.put("status", order.get("status"));
+		response.put("receipt", order.get("receipt"));
+		response.put("created_at", order.get("created_at"));
+		response.put("userName", user.getName());
+		response.put("userEmail", user.getEmail());
+		response.put("userPhone", user.getProfile().getPhoneNumber());
+		response.put("keyId", razorpayCredentials.getKeyId());
+
+		return ResponseEntity.ok(response);
+	}
+
+	@PostMapping("/verify-payment")
+    public ResponseEntity<String> verifyPayment(@RequestBody Map<String, String> payload, Principal principal) {
+		Optional<RazorpayCredentials> razorPayOptional = razorpayCredentialsRepository.findById(1);
+		RazorpayCredentials razorpayCredentials = razorPayOptional.get();
+		if (razorPayOptional.isEmpty()) {
+			return ResponseEntity.ok("Please contact admin!");
+		}
+		
+        String razorpayPaymentId = payload.get("razorpay_payment_id");
+        String razorpayOrderId = payload.get("razorpay_order_id");
+        String razorpaySignature = payload.get("razorpay_signature");
+
+        String secret =razorpayCredentials.getKeySecret();
+
+        boolean isValid = isValidSignature(
+                razorpayOrderId,
+                razorpayPaymentId,
+                razorpaySignature,
+                secret
+        );
+
+        if (isValid) {
+            return ResponseEntity.ok("✅ Payment verified successfully");
+        } else {
+            return ResponseEntity.badRequest().body("❌ Payment verification failed");
+        }
+    }
+	
+	boolean isValidSignature(String orderId, String paymentId, String razorpaySignature, String secret) {
+        try {
+            String payload = orderId + "|" + paymentId;
+
+            Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
+            SecretKeySpec secretKey = new SecretKeySpec(secret.getBytes(), "HmacSHA256");
+            sha256_HMAC.init(secretKey);
+
+            byte[] hash = sha256_HMAC.doFinal(payload.getBytes(StandardCharsets.UTF_8));
+            String generatedSignature = new String(Hex.encode(hash));
+
+            return generatedSignature.equals(razorpaySignature);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+	
+	@GetMapping("/orderSucess") 
+	public String getOrderSucess() {
+		return "/orderSucess";
+	}
 }

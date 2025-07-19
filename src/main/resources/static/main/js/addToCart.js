@@ -1,46 +1,3 @@
- function payNow() {
-      const paybleElement=document.getElementById("payable");
-	  let amountText = paybleElement.innerText.trim().replace(/[^\d]/g, '');
-	  const amount = parseInt(amountText);
-	  console.log(amount)
-	  fetch('/allPermit/create-order?amount=' + amount, {
-	              method: 'POST',
-				  headers: {
-				  		  [header]: token 
-				           }
-	          })
-	          .then(res => res.json())
-	          .then(order => {
-	              var options = {
-	                  "key": "rzp_test_uMMypIJ2X2bn1N", 
-	                  "amount": order.amount,
-	                  "currency": "INR",
-	                  "name": "BulkTradeHub",
-	                  "description": "Order Payment",
-	                  "order_id": order.id,
-	                  "handler": function (response){
-							console.log("response",response);
-							clearCart();
-	                  },
-	                  "prefill": {
-	                      "name": order.userName,
-	                      "email": order.userEmail,
-	                      "contact": order.userPhone
-	                  },
-	                  "theme": {
-	                      "color": "#3399cc"
-	                  }
-	              };
-	              var rzp1 = new Razorpay(options);
-	              rzp1.open();
-	          })
-	          .catch(err => {
-	              console.error(err);
-	              alert("Failed to create order. Check console for error.");
-	          });
-  }
- 
-  
   window.onload=function(){
 	loadCart();
   };
@@ -76,6 +33,7 @@
       if (!res.ok) throw new Error("Failed to fetch cart");
 
       const userCart = await res.json();
+	  console.log(userCart);
 
       if (userCart.length === 0) {
         cartContainer.innerHTML =
@@ -305,9 +263,7 @@
     document.getElementById("payable").textContent = `₹${payable.toFixed(2)}`;
   }
 
-
-
-	
+  
   async function increaseBtnQty(id, isUser = false) {
     if (isUser) {
       try {
@@ -402,4 +358,61 @@
   	}
 	cartItem.dataset.quantity = newQty;
   }
+  
+  
+  function payNow() {
+  	const paybleElement = document.getElementById("payable");
+  	let amountText = paybleElement.innerText.trim().replace(/[^\d.]/g, '');
+  	const amount = parseFloat(amountText);
 
+  	fetch('/home/create-razorpay-order', {
+  		method: 'POST',
+  		headers: {
+  			'Content-Type': 'application/json',
+  			[csrfHeader]: csrfToken
+  		},
+  		body: JSON.stringify({ amount: amount })
+  	})
+  	.then(res => res.json())
+  	.then(order => {
+  		var options = {
+  			"key": order.keyId,
+  			"amount": order.amount,
+  			"currency": "INR",
+  			"name": "BulkTradeHub",
+  			"description": "Order Payment",
+  			"order_id": order.orderId,
+  			"handler":function (response) {
+			    fetch("/home/verify-payment", {
+			        method: "POST",
+			        headers: {
+			            "Content-Type": "application/json",
+			            [csrfHeader]: csrfToken
+			        },
+			        body: JSON.stringify({
+			            razorpay_payment_id: response.razorpay_payment_id,
+			            razorpay_order_id: response.razorpay_order_id,
+			            razorpay_signature: response.razorpay_signature
+			        })
+			    }).then(res => res.text())
+			      .then(msg => {
+					console.log("Payment verification success:", msg);
+				    window.location.href = "/home/orderSucess";
+				  })
+			      .catch(err => console.error("Verification failed", err));
+			},
+  			"prefill": {
+  				"name": order.userName,
+  				"email": order.userEmail,
+  				"contact": order.userPhone
+  			},
+  			"theme": { "color": "#3399cc" }
+  		};
+  		var rzp1 = new Razorpay(options);
+  		rzp1.open();
+  	})
+  	.catch(err => {
+  		console.error(err);
+  		alert("Failed to create order.");
+  	});
+  }

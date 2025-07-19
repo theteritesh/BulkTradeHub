@@ -52,9 +52,14 @@
 				</div>
 				
 				<button class="w-full bg-yellow-400 hover:bg-yellow-500 text-[13px] font-semibold py-2 rounded"
-					onclick="payNow()">
+					onclick="payNow()" sec:authorize="isAuthenticated()">
 				      Proceed to Buy
-				     </button>
+				</button>
+				<a th:href="@{/login}"
+				   class="w-full block text-center bg-yellow-400 hover:bg-yellow-500 text-[13px] font-semibold py-2 rounded no-underline hover:no-underline text-black hover:text-black"
+				   sec:authorize="isAnonymous()">
+				   Proceed to Buy
+				</a>
 		      </div>
 		    </div>
 		  </div>

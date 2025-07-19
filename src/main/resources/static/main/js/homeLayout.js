@@ -116,7 +116,8 @@ const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
 	     })
 	   .then(response => {
 	     if (response.ok) {
-			clearGuestCart()
+			clearGuestCart();
+			updateCartCount();
 	     }
 	   })
 	   .catch(error => {

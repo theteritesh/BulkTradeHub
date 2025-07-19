@@ -1,9 +1,11 @@
 package com.technoworld.BulkTradeHub.controller;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -20,11 +22,13 @@ import com.technoworld.BulkTradeHub.entity.Contact;
 import com.technoworld.BulkTradeHub.entity.Product;
 import com.technoworld.BulkTradeHub.entity.ProductPost;
 import com.technoworld.BulkTradeHub.entity.Profile;
+import com.technoworld.BulkTradeHub.entity.RazorpayCredentials;
 import com.technoworld.BulkTradeHub.entity.RetailShopProfile;
 import com.technoworld.BulkTradeHub.entity.User;
 import com.technoworld.BulkTradeHub.repository.BrandRepository;
 import com.technoworld.BulkTradeHub.repository.CategoryRepository;
 import com.technoworld.BulkTradeHub.repository.ProductPostRepository;
+import com.technoworld.BulkTradeHub.repository.RazorpayCredentialsRepository;
 import com.technoworld.BulkTradeHub.repository.UserRepository;
 import com.technoworld.BulkTradeHub.service.AdminServiceImplementation;
 import com.technoworld.BulkTradeHub.service.ContactService;
@@ -53,6 +57,9 @@ public class AdminHomeController {
 	
 	@Autowired
 	private ProductPostRepository productPostRepository;
+	
+	@Autowired
+	private RazorpayCredentialsRepository razorpayCredentialsRepository;
 	
 	@GetMapping("/dashboard")
 	public String adminDashboard(Model model) {
@@ -240,5 +247,44 @@ public class AdminHomeController {
 		productPostRepository.deleteById(id);
 		return "redirect:/admin/postedProducts";
 	}
+	
+	@GetMapping("/credentials")
+	public String getCredentials(Model model) {
+		Optional<RazorpayCredentials> razorpayCredentialsOptional = razorpayCredentialsRepository.findById(1);
+		RazorpayCredentials razorpayCredentials=null;
+		if(razorpayCredentialsOptional.isEmpty()) {
+			razorpayCredentials=new RazorpayCredentials();
+		}
+		razorpayCredentials=razorpayCredentialsOptional.get();
+		
+		model.addAttribute("id",razorpayCredentials.getId());
+		model.addAttribute("keyId",razorpayCredentials.getKeyId());
+		model.addAttribute("keySecret",razorpayCredentials.getKeySecret());
+		
+		return"/admin/credentials";
+	}
+	
+	@PostMapping("/save-razorpay-credentials")
+    public ResponseEntity<String> saveRazorpayCredentials(
+    		@RequestParam("id") String id,
+            @RequestParam("keyId") String keyId,
+            @RequestParam("keySecret") String keySecret) {
+
+        if (keyId == null || keyId.isEmpty() || keySecret == null || keySecret.isEmpty()) {
+            return ResponseEntity.badRequest().body("Key ID and Key Secret must not be empty.");
+        }
+        RazorpayCredentials credentials=null;
+        if(id == null || id.isEmpty()) {
+        	credentials = new RazorpayCredentials();
+        }else {
+        	credentials=razorpayCredentialsRepository.findById(1).get();
+        }
+
+        credentials.setKeyId(keyId);
+        credentials.setKeySecret(keySecret);
+        
+        razorpayCredentialsRepository.save(credentials);
+        return ResponseEntity.ok("Razorpay credentials saved successfully.");
+    }
 
 }
