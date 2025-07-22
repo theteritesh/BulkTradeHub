@@ -392,12 +392,12 @@
 			        body: JSON.stringify({
 			            razorpay_payment_id: response.razorpay_payment_id,
 			            razorpay_order_id: response.razorpay_order_id,
-			            razorpay_signature: response.razorpay_signature
+			            razorpay_signature: response.razorpay_signature,
+						amount:order.amount
 			        })
-			    }).then(res => res.text())
-			      .then(msg => {
-					console.log("Payment verification success:", msg);
-				    window.location.href = "/home/orderSucess";
+			    }).then(res => res.json())
+			      .then(data => {
+				    window.location.href = `/home/secure/orderSucess/${data.orderId}`;
 				  })
 			      .catch(err => console.error("Verification failed", err));
 			},

@@ -113,36 +113,36 @@
 	        }
 	    </style>
 		<div class="container-lg">
-
+			<input id="orderId" th:value="${orderId}" hidden>
 		    <div class="mb-4">
-		        <small class="text-muted">Order #521459</small>
+		        <small id="orderNumber" class="text-muted">Order #521459</small>
 		    </div>
 
 		    <nav aria-label="Progress">
 		        <div class="stepper" role="list">
 
-		            <div class="step completed" role="listitem" tabindex="0" aria-current="step">
+		            <div id="step1" class="step completed" role="listitem" tabindex="0" aria-current="step">
 		                <div class="step-number">1</div>
 		                <div class="step-label">Order Received</div>
-		                <div class="step-date">May 26, 2024</div>
+		                <div id="step1Date" class="step-date">May 26, 2024</div>
 		            </div>
 
-		            <div class="step step-neutral" role="listitem">
+		            <div id="step2" class="step step-neutral" role="listitem">
 		                <div class="step-number">2</div>
 		                <div class="step-label">Order Shipped</div>
-		                <div class="step-date">May 27, 2024</div>
+		                <div id="step2Date" class="step-date">May 27, 2024</div>
 		            </div>
 
-		            <div class="step step-neutral" role="listitem">
+		            <div id="step3" class="step step-neutral" role="listitem">
 		                <div class="step-number">3</div>
 		                <div class="step-label">On the Way</div>
-		                <div class="step-date">May 29, 2024</div>
+		                <div id="step3Date" class="step-date">May 29, 2024</div>
 		            </div>
 
-		            <div class="step step-neutral" role="listitem">
+		            <div id="step4" class="step step-neutral" role="listitem">
 		                <div class="step-number">4</div>
 		                <div class="step-label">Delivered</div>
-		                <div class="step-date">June 06, 2024</div>
+		                <div id="step4Date" class="step-date">June 06, 2024</div>
 		            </div>
 
 		        </div>
@@ -150,61 +150,40 @@
 
 		    <div class="row gy-4 mb-5">
 
-		        <!-- Order Information -->
 		        <div class="col-md-4">
-		            <h6 class="mb-3 fw-semibold">
-		                <svg class="info-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-		                    <path d="M12 2C6.486 2 2 6.486 2 12c0 5.514 4.486 10 10 10s10-4.486 10-10c0-5.514-4.486-10-10-10zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
-		                </svg>
-		                Order Information
+		            <h6 class="mb-3 fw-bold">
+		                <i class="bi bi-info-circle-fill"></i> Order Information
 		            </h6>
-		            <p class="mb-1"><strong>Pickup Date:</strong><br> 26 May, 2024 12:24:10 pm</p>
-		            <p class="mb-1"><strong>Estimate Drop:</strong><br> 8 Days</p>
-		            <p class="mb-0"><strong>Return Available Time:</strong><br> In 7 Days</p>
+		            <p id="pickupDate" class="mb-1"><strong>Pickup Date:</strong><br> 26 May, 2024 12:24:10 pm</p>
+		            <p id="estimateDrop" class="mb-1"><strong>Estimate Drop:</strong><br> 8 Days</p>
+		            <p id="returnTime" class="mb-0"><strong>Return Available Time:</strong><br> In 7 Days</p>
 		        </div>
 
-		        <!-- Locations -->
 		        <div class="col-md-4">
 		            <h6 class="mb-3 fw-semibold">
-		                <svg class="info-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-		                    <path d="M12 2C8.134 2 5 5.134 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.866-3.134-7-7-7zm0 9.5A2.5 2.5 0 1 1 14.5 9 2.504 2.504 0 0 1 12 11.5z"/>
-		                </svg>
-		                Locations
+		                <i class="bi bi-geo-alt-fill"></i> Locations
 		            </h6>
 		            <div class="mb-3">
-		                <strong class="d-block mb-1">Pickup Location</strong>
-		                <address class="mb-0">
+		                <strong class="d-block mb-1">Delivery Address</strong>
+		                <address id="deliveryAddress" class="mb-0">
 		                    Jane Smith<br />
-		                    456 Maple Avenue, Brooklyn, NY 11201<br />
-		                    United States
-		                </address>
-		            </div>
-		            <div>
-		                <strong class="d-block mb-1">Dropoff Location</strong>
-		                <address class="mb-0">
-		                    Michael Johnson<br />
-		                    789 Oak Street, Los Angeles, CA 90001<br />
+		                    456 Maple Avenue, Brooklyn, NY 11201d 456 Maple Avenue,<br />
 		                    United States
 		                </address>
 		            </div>
 		        </div>
 
-		        <!-- Customer Details -->
 		        <div class="col-md-4">
 		            <h6 class="mb-3 fw-semibold">
-		                <svg class="info-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-		                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-		                </svg>
-		                Customer Details
+		                <i class="bi bi-person-fill"></i> Customer Details
 		            </h6>
-		            <p class="mb-1"><strong>Full Name:</strong><br> Jane Smith</p>
-		            <p class="mb-1"><strong>E-mail:</strong><br> <a href="mailto:mail@pagedone.com" class="link-primary">mail@pagedone.com</a></p>
-		            <p class="mb-0"><strong>Phone Number:</strong><br> +1 369-1212</p>
+		            <p id="customerName" class="mb-1"><strong>Full Name:</strong><br> Jane Smith</p>
+		            <p id="customerEmail" class="mb-1"><strong>E-mail:</strong><br> <a href="mailto:mail@pagedone.com" class="link-primary">mail@pagedone.com</a></p>
+		            <p id="customerPhone" class="mb-0"><strong>Phone Number:</strong><br> +1 369-1212</p>
 		        </div>
 
 		    </div>
 
-		    <!-- Item List -->
 		    <section>
 		        <h5 class="mb-3">Item List</h5>
 		        <div class="table-responsive">
@@ -218,71 +197,16 @@
 		                        <th scope="col" class="text-end">Total</th>
 		                    </tr>
 		                </thead>
-		                <tbody>
-		                    <tr>
-		                        <td class="text-center">1</td>
-		                        <td class="d-flex align-items-center gap-2">
-		                            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/e0926f84-eea9-4285-a8ab-10e8faf06da1.png" alt="Laptop product image, small black laptop with sleek design on light gray background" class="item-img" onerror="this.onerror=null;this.src='https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/e4453a7f-d8df-4840-9ddb-55c90aecae49.png';" />
-		                            Laptop
-		                        </td>
-		                        <td>$80.00</td>
-		                        <td>1</td>
-		                        <td class="text-end fw-semibold">$80.00</td>
-		                    </tr>
-		                    <tr>
-		                        <td class="text-center">2</td>
-		                        <td class="d-flex align-items-center gap-2">
-		                            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/af55e556-d7c0-46a0-ad21-a560fb21dc03.png" alt="Watch product image, elegant black wristwatch with round dial displayed on white background" class="item-img" onerror="this.onerror=null;this.src='https://placehold.co/40x40/png?text=No+Image';" />
-		                            Watch
-		                        </td>
-		                        <td>$56.00</td>
-		                        <td>2</td>
-		                        <td class="text-end fw-semibold">$112.00</td>
-		                    </tr>
-		                    <tr>
-		                        <td class="text-center">3</td>
-		                        <td class="d-flex align-items-center gap-2">
-		                            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/9faefbec-4dd3-48f1-9aa8-f0af1465e8a9.png" alt="Headphone product image, beige and white wireless headphones on subtle gray background" class="item-img" onerror="this.onerror=null;this.src='https://placehold.co/40x40/png?text=No+Image';" />
-		                            Headphone
-		                        </td>
-		                        <td>$94.00</td>
-		                        <td>1</td>
-		                        <td class="text-end fw-semibold">$94.00</td>
-		                    </tr>
-		                    <tr>
-		                        <td class="text-center">4</td>
-		                        <td class="d-flex align-items-center gap-2">
-		                            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/d85b0881-dd32-41b0-b2ac-723793f1e2cf.png" alt="Perfume product image, glass bottle of perfume with pink tint and rose petals in background" class="item-img" onerror="this.onerror=null;this.src='https://placehold.co/40x40/png?text=No+Image';" />
-		                            Perfume
-		                        </td>
-		                        <td>$83.00</td>
-		                        <td>1</td>
-		                        <td class="text-end fw-semibold">$83.00</td>
-		                    </tr>
-		                    <tr class="table-light">
-		                        <td colspan="4" class="text-end fw-bold">All Total</td>
-		                        <td class="text-end fw-bold">$369.00</td>
-		                    </tr>
+		                <tbody id="itemListBody">
+		                    
 		                </tbody>
 		            </table>
 		        </div>
 		    </section>
-
-		    <!-- Map Section -->
-		    <section class="map-container" aria-label="Route map showing locations from pickup to dropoff across multiple cities">
-		        <iframe 
-		            src="https://www.openstreetmap.org/export/embed.html?bbox=68.87939453125%2C22.274875265497424%2C73.21380615234375%2C23.54558874501522&layer=mapnik&marker=22.90515%2C70.49744" 
-		            style="border:0; width: 100%; height: 100%;" 
-		            allowfullscreen="" 
-		            loading="lazy" 
-		            title="Route map from pickup location to dropoff location with marked path on OpenStreetMap"
-		            aria-hidden="false"
-		        ></iframe>
-		    </section>
-
 		</div>
 		
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+		<script th:src="@{/main/js/orderSucess.js}"></script>
 	</section>
 
 </body>

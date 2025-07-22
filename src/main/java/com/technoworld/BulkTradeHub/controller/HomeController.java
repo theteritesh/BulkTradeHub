@@ -40,14 +40,19 @@ import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
 import com.technoworld.BulkTradeHub.entity.Cart;
 import com.technoworld.BulkTradeHub.entity.Contact;
+import com.technoworld.BulkTradeHub.entity.OrderItems;
 import com.technoworld.BulkTradeHub.entity.Product;
 import com.technoworld.BulkTradeHub.entity.ProductPost;
 import com.technoworld.BulkTradeHub.entity.RazorpayCredentials;
 import com.technoworld.BulkTradeHub.entity.User;
+import com.technoworld.BulkTradeHub.entity.UserOrders;
 import com.technoworld.BulkTradeHub.repository.CartRepository;
+import com.technoworld.BulkTradeHub.repository.OrderItemsRepository;
 import com.technoworld.BulkTradeHub.repository.ProductPostRepository;
 import com.technoworld.BulkTradeHub.repository.ProductRepository;
 import com.technoworld.BulkTradeHub.repository.RazorpayCredentialsRepository;
+import com.technoworld.BulkTradeHub.repository.UserOrderRepository;
+import com.technoworld.BulkTradeHub.repository.UserRepository;
 import com.technoworld.BulkTradeHub.service.ContactService;
 
 
@@ -69,6 +74,15 @@ public class HomeController {
 	
 	@Autowired
 	private RazorpayCredentialsRepository razorpayCredentialsRepository;
+	
+	@Autowired
+	private OrderItemsRepository orderItemsRepository;
+	
+	@Autowired
+	private UserOrderRepository userOrderRepository;
+	
+	@Autowired
+	private UserRepository userRepository;
 	
 	@GetMapping("")
     public String displayHome() {
@@ -499,16 +513,21 @@ public class HomeController {
 	}
 
 	@PostMapping("/verify-payment")
-    public ResponseEntity<String> verifyPayment(@RequestBody Map<String, String> payload, Principal principal) {
+    public ResponseEntity<?> verifyPayment(@RequestBody Map<String, String> payload, Principal principal) {
+		User user = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
 		Optional<RazorpayCredentials> razorPayOptional = razorpayCredentialsRepository.findById(1);
 		RazorpayCredentials razorpayCredentials = razorPayOptional.get();
+		HashMap<String, Object> responce= new HashMap<>();
+		
 		if (razorPayOptional.isEmpty()) {
-			return ResponseEntity.ok("Please contact admin!");
+			responce.put("msg", "Please contact admin!");
+			return ResponseEntity.ok(responce);
 		}
 		
         String razorpayPaymentId = payload.get("razorpay_payment_id");
         String razorpayOrderId = payload.get("razorpay_order_id");
         String razorpaySignature = payload.get("razorpay_signature");
+        double amount= Double.parseDouble(payload.get("amount"))/100;
 
         String secret =razorpayCredentials.getKeySecret();
 
@@ -520,7 +539,42 @@ public class HomeController {
         );
 
         if (isValid) {
-            return ResponseEntity.ok("✅ Payment verified successfully");
+        	List<Cart> byUserIdOrderByAddedAtDesc = cartRepository.findByUserIdOrderByAddedAtDesc(user.getId());
+        	
+        	UserOrders order = new UserOrders();
+        	order.setBuyerId(user.getId());
+        	order.setRazorpayOrderId(razorpayOrderId);
+        	order.setRazorpayPaymentId(razorpayPaymentId);
+        	order.setFinalAmount(amount);
+        	order.setStatus("PAID");
+        	order.setCreatedAt(LocalDateTime.now());
+        	
+        	UserOrders userOrder = userOrderRepository.save(order);
+        	
+        	for(Cart item : byUserIdOrderByAddedAtDesc) {
+        		Optional<ProductPost> productPostOptional = productPostRepository.findById(item.getProductPostId());
+        		ProductPost productPost = productPostOptional.get();
+        		Double lotProce = productPost.getWholesalePrice()*productPost.getMinOrderQuantity();
+        		
+        		productPost.setLots(productPost.getLots() - item.getQuantity());
+        		
+        		OrderItems orderItem = new OrderItems();
+        		orderItem.setBuyerId(item.getUserId());
+        		orderItem.setLotsQuntity(item.getQuantity());
+        		orderItem.setProductPostId(item.getProductPostId());
+        		orderItem.setSellerId(productPost.getUser().getId());
+        		orderItem.setLotPrice(lotProce);
+        		orderItem.setSubTotal(lotProce * item.getQuantity());
+        		orderItem.setOrderId(userOrder.getId());
+        		
+        		orderItemsRepository.save(orderItem);
+        		productPostRepository.save(productPost);
+        		cartRepository.delete(item);
+        	}
+        	
+        	responce.put("orderId", userOrder.getId());
+        	
+            return ResponseEntity.ok(responce);
         } else {
             return ResponseEntity.badRequest().body("❌ Payment verification failed");
         }
@@ -544,8 +598,102 @@ public class HomeController {
         }
     }
 	
-	@GetMapping("/orderSucess") 
-	public String getOrderSucess() {
+	@GetMapping("/secure/orderSucess/{orderId}") 
+	public String getOrderSucess(@PathVariable("orderId") int id,Model model) {
+		model.addAttribute("oderId",id);
 		return "/orderSucess";
 	}
+	
+	@GetMapping("/secure/getOrderDetails/{orderId}")
+	@ResponseBody
+	public ResponseEntity<?> getOrderDetails(@PathVariable("orderId") int id, Principal principal) {
+	    Map<String, Object> response = new HashMap<>();
+
+	    try {
+	        // Get logged-in user
+	        User user = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+
+	        // Fetch the order for that user
+	        Optional<UserOrders> orderOptional = userOrderRepository.findByIdAndBuyerId(id, user.getId());
+	        if (orderOptional.isEmpty()) {
+	            response.put("error", "Order not found or access denied.");
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+	        }
+
+	        UserOrders userOrder = orderOptional.get();
+
+	        // Get buyer details
+	        Optional<User> buyerOptional = userRepository.findById(userOrder.getBuyerId());
+	        if (buyerOptional.isEmpty()) {
+	            response.put("error", "Buyer not found.");
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+	        }
+
+	        User buyer = buyerOptional.get();
+
+	        Map<String, Object> buyerData = new HashMap<>();
+	        buyerData.put("orderId", userOrder.getRazorpayOrderId());
+	        buyerData.put("name", buyer.getName());
+	        buyerData.put("email", buyer.getEmail());
+
+	        if (buyer.getProfile() != null) {
+	            buyerData.put("phone", buyer.getProfile().getPhoneNumber());
+	            buyerData.put("address", buyer.getProfile().getAddress());
+	            buyerData.put("city", buyer.getProfile().getCity());
+	            buyerData.put("state", buyer.getProfile().getState());
+	            buyerData.put("country", buyer.getProfile().getCountry());
+	            buyerData.put("pincode", buyer.getProfile().getPincode());
+	        } else {
+	            buyerData.put("phone", "");
+	            buyerData.put("address", "");
+	            buyerData.put("city", "");
+	            buyerData.put("state", "");
+	            buyerData.put("country", "");
+	            buyerData.put("pincode", "");
+	        }
+
+	        // Get order items
+	        List<OrderItems> orderItemsList = orderItemsRepository.findOrderItemByOderId(id);
+	        List<Map<String, Object>> orderItems = new ArrayList<>();
+
+	        for (OrderItems item : orderItemsList) {
+	            Map<String, Object> itemData = new HashMap<>();
+	            Optional<ProductPost> productPostOpt = productPostRepository.findById(item.getProductPostId());
+	            Optional<Product> productOpt = productPostOpt.isPresent()
+	                ? productRepository.findById(productPostOpt.get().getProductId())
+	                : Optional.empty();
+
+	            if (productPostOpt.isPresent() && productOpt.isPresent()) {
+	                ProductPost productPost = productPostOpt.get();
+	                Product product = productOpt.get();
+
+	                itemData.put("name", productPost.getProductName());
+	                itemData.put("quantity", item.getLotsQuntity());
+	                itemData.put("amount", item.getLotPrice());
+
+	                String productImage = product.getMainImage() != null
+	                        ? "data:image/jpeg;base64," + Base64.getEncoder().encodeToString((byte[]) product.getMainImage())
+	                        : "";
+
+	                itemData.put("productImage", productImage);
+	                itemData.put("total", item.getSubTotal());
+
+	                orderItems.add(itemData);
+	            }
+	        }
+
+	        // Prepare final response
+	        response.put("buyerData", buyerData);
+	        response.put("orderItems", orderItems);
+	        response.put("finalAmount", userOrder.getFinalAmount());
+
+	        return ResponseEntity.ok(response);
+
+	    } catch (Exception ex) {
+	        response.put("error", "Something went wrong. Please try again later.");
+	        response.put("details", ex.getMessage());
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+	    }
+	}
+
 }

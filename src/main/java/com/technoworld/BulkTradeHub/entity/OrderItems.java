@@ -17,6 +17,7 @@ public class OrderItems {
 	private long buyerId;
 	private long sellerId;
 	private double subTotal;
+	private int orderId;
 	
 	public int getId() {
 		return id;
@@ -60,10 +61,17 @@ public class OrderItems {
 	public void setSubTotal(double subTotal) {
 		this.subTotal = subTotal;
 	}
+	public int getOrderId() {
+		return orderId;
+	}
+	public void setOrderId(int orderId) {
+		this.orderId = orderId;
+	}
+	
 	@Override
 	public String toString() {
 		return "OrderItems [id=" + id + ", productPostId=" + productPostId + ", lotsQuntity=" + lotsQuntity
 				+ ", lotPrice=" + lotPrice + ", buyerId=" + buyerId + ", sellerId=" + sellerId + ", subTotal="
-				+ subTotal + "]";
+				+ subTotal + ", orderId=" + orderId + "]";
 	}
 }

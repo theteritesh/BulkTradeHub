@@ -15,6 +15,7 @@ public class ProjectSecurityConfig {
 	SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity
 				.authorizeHttpRequests(auth -> auth
+						.requestMatchers("/home/secure/**").authenticated()
 						.requestMatchers("/home/**").permitAll()
 						.requestMatchers("/main/**").permitAll()
 						.requestMatchers("/login").permitAll()
