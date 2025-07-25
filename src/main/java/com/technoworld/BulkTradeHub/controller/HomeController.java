@@ -633,6 +633,7 @@ public class HomeController {
 
 	        Map<String, Object> buyerData = new HashMap<>();
 	        buyerData.put("orderId", userOrder.getRazorpayOrderId());
+	        buyerData.put("orderReciveDate", userOrder.getCreatedAt());
 	        buyerData.put("name", buyer.getName());
 	        buyerData.put("email", buyer.getEmail());
 
@@ -655,6 +656,9 @@ public class HomeController {
 	        // Get order items
 	        List<OrderItems> orderItemsList = orderItemsRepository.findOrderItemByOderId(id);
 	        List<Map<String, Object>> orderItems = new ArrayList<>();
+	        
+	        int minDays = Integer.MAX_VALUE;
+            int maxDays = Integer.MIN_VALUE;
 
 	        for (OrderItems item : orderItemsList) {
 	            Map<String, Object> itemData = new HashMap<>();
@@ -666,10 +670,11 @@ public class HomeController {
 	            if (productPostOpt.isPresent() && productOpt.isPresent()) {
 	                ProductPost productPost = productPostOpt.get();
 	                Product product = productOpt.get();
-
+	                itemData.put("productPostId", productPost.getId());
 	                itemData.put("name", productPost.getProductName());
 	                itemData.put("quantity", item.getLotsQuntity());
 	                itemData.put("amount", item.getLotPrice());
+	                
 
 	                String productImage = product.getMainImage() != null
 	                        ? "data:image/jpeg;base64," + Base64.getEncoder().encodeToString((byte[]) product.getMainImage())
@@ -677,10 +682,34 @@ public class HomeController {
 
 	                itemData.put("productImage", productImage);
 	                itemData.put("total", item.getSubTotal());
+	                
+	                
+	                
+	                int deliveryDays = Integer.parseInt(productPost.getDeliveryTime());
+
+	                // If MadeToOrder, add leadTime (if present)
+	                if ("MadeToOrder".equalsIgnoreCase(productPost.getAvailabilityType()) && productPost.getLeadTime() != null) {
+	                    try {
+	                        int leadDays = Integer.parseInt(productPost.getLeadTime());
+	                        deliveryDays += leadDays;
+	                    } catch (NumberFormatException e) {
+	                    }
+	                }
+
+	                // Update min and max
+	                if (deliveryDays < minDays) {
+	                    minDays = deliveryDays;
+	                }
+	                if (deliveryDays > maxDays) {
+	                    maxDays = deliveryDays;
+	                }
+	                
 
 	                orderItems.add(itemData);
 	            }
 	        }
+	        buyerData.put("minDeliveryDays", minDays);
+	        buyerData.put("maxDeliveryDays", maxDays);
 
 	        // Prepare final response
 	        response.put("buyerData", buyerData);

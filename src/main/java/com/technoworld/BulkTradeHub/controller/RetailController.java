@@ -823,7 +823,7 @@ public class RetailController {
 	            redirectAttributes.addFlashAttribute("errorMessage", "Product not found. Please try again.");
 	        }
 
-	        return "redirect:/products/searchProduct?productId=" + productId;
+	        return "redirect:/retailShop/searchProductForPost?productId=" + productId;
 	    }
 	    
 	    @GetMapping("/searchProductForPost")
