@@ -719,10 +719,52 @@ public class HomeController {
 	        return ResponseEntity.ok(response);
 
 	    } catch (Exception ex) {
+	    	ex.printStackTrace();
 	        response.put("error", "Something went wrong. Please try again later.");
 	        response.put("details", ex.getMessage());
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 	    }
 	}
+	
+	@GetMapping("/secure/orders")
+	public String getOrderList() {
+		return "/myOrders";
+	}
+	
+	@GetMapping("/secure/getOrdersList")
+	public ResponseEntity<?> getOrdersList(Principal principal) {
+	    Map<String, Object> response = new HashMap<>();
+
+	    try {
+	        User user = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+
+	        List<UserOrders> listOfOrders = userOrderRepository.findByBuyerIdOrderByCreatedAtDesc(user.getId());
+
+	        List<Map<String, Object>> listOfOrdersForResponse = new ArrayList<>();
+	        for (UserOrders userOrder : listOfOrders) {
+	            Map<String, Object> order = new HashMap<>();
+	            order.put("orderID", userOrder.getRazorpayOrderId());
+	            order.put("date", userOrder.getCreatedAt());
+	            order.put("amount", userOrder.getFinalAmount());
+	            order.put("id", userOrder.getId());
+	            listOfOrdersForResponse.add(order);
+	        }
+
+	        response.put("status", "success");
+	        response.put("ordersList", listOfOrdersForResponse);
+	        return ResponseEntity.ok(response);
+
+	    } catch (ClassCastException e) {
+	        response.put("status", "error");
+	        response.put("error", "Unauthorized access.");
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+	    } catch (Exception ex) {
+	        response.put("status", "error");
+	        response.put("error", "Something went wrong. Please try again later.");
+	        response.put("details", ex.getMessage());
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+	    }
+	}
+
 
 }

@@ -1,5 +1,6 @@
 package com.technoworld.BulkTradeHub.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,5 +13,7 @@ import com.technoworld.BulkTradeHub.entity.UserOrders;
 public interface UserOrderRepository extends JpaRepository<UserOrders, Integer> {
 	
 	Optional<UserOrders> findByIdAndBuyerId(int id, int buyerId);
+	
+	List<UserOrders> findByBuyerIdOrderByCreatedAtDesc(int buyerId);
 }
 
