@@ -30,6 +30,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,6 +41,7 @@ import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
 import com.technoworld.BulkTradeHub.entity.Cart;
 import com.technoworld.BulkTradeHub.entity.Contact;
+import com.technoworld.BulkTradeHub.entity.DeliveryAddresses;
 import com.technoworld.BulkTradeHub.entity.OrderItems;
 import com.technoworld.BulkTradeHub.entity.Product;
 import com.technoworld.BulkTradeHub.entity.ProductPost;
@@ -47,6 +49,7 @@ import com.technoworld.BulkTradeHub.entity.RazorpayCredentials;
 import com.technoworld.BulkTradeHub.entity.User;
 import com.technoworld.BulkTradeHub.entity.UserOrders;
 import com.technoworld.BulkTradeHub.repository.CartRepository;
+import com.technoworld.BulkTradeHub.repository.DeliveryAddressesRepository;
 import com.technoworld.BulkTradeHub.repository.OrderItemsRepository;
 import com.technoworld.BulkTradeHub.repository.ProductPostRepository;
 import com.technoworld.BulkTradeHub.repository.ProductRepository;
@@ -83,6 +86,9 @@ public class HomeController {
 	
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private DeliveryAddressesRepository deliveryAddressesRepository;
 	
 	@GetMapping("")
     public String displayHome() {
@@ -765,6 +771,54 @@ public class HomeController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 	    }
 	}
+	
+	@GetMapping("/primaryAddress")
+	@ResponseBody
+	public ResponseEntity<?> getPrimaryAddress(Principal principal) {
+	    User user = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+	    Optional<DeliveryAddresses> primary = deliveryAddressesRepository.findByUserIdAndIsPrimaryTrue(user.getId());
+
+	    if (primary.isPresent()) {
+	        return ResponseEntity.ok(primary.get());
+	    } else {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No primary address set");
+	    }
+	}
+
+	@GetMapping("/getAllAddresses")
+	@ResponseBody
+	public List<DeliveryAddresses> getAllAddresses(Principal principal) {
+	    User user = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+	    return deliveryAddressesRepository.findAllByUserId(user.getId());
+	}
+
+	@PutMapping("/makePrimaryAddress/{id}")
+	@ResponseBody
+	public ResponseEntity<?> makePrimaryAddress(@PathVariable("id") int id, Principal principal) {
+	    User user = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+
+	    Optional<DeliveryAddresses> optional = deliveryAddressesRepository.findById(id);
+	    if (optional.isEmpty()) {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Address not found");
+	    }
+
+	    DeliveryAddresses selectedAddress = optional.get();
+
+	    if (selectedAddress.getUserId() != user.getId()) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+	    }
+
+	    // Fetch and update all addresses
+	    List<DeliveryAddresses> allUserAddresses = deliveryAddressesRepository.findAllByUserId(user.getId());
+	    for (DeliveryAddresses addr : allUserAddresses) {
+	        addr.setPrimary(addr.getId() == selectedAddress.getId());
+	    }
+
+	    deliveryAddressesRepository.saveAll(allUserAddresses);
+
+	    return ResponseEntity.ok("Primary address updated");
+	}
+
 
 
 }

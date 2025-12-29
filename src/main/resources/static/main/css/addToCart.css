@@ -17,3 +17,18 @@ body {
   .quantity-control .btn-custom-qty:focus {
     box-shadow: none;
   }
+  
+  .custom-modal-width {
+      max-width: 700px; 
+    }
+	
+	.address-cart-item {
+	  transition: transform 0.2s ease, box-shadow 0.2s ease;
+	  cursor: pointer;
+	}
+
+	.address-cart-item:hover {
+	  transform: translateY(-3px);
+	  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	  background-color: #f8f9fa; /* Light gray background on hover */
+	}

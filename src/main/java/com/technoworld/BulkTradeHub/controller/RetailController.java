@@ -13,15 +13,19 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -30,6 +34,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.technoworld.BulkTradeHub.entity.Brand;
 import com.technoworld.BulkTradeHub.entity.Category;
+import com.technoworld.BulkTradeHub.entity.DeliveryAddresses;
 import com.technoworld.BulkTradeHub.entity.Product;
 import com.technoworld.BulkTradeHub.entity.ProductGtinInfo;
 import com.technoworld.BulkTradeHub.entity.ProductPost;
@@ -38,6 +43,7 @@ import com.technoworld.BulkTradeHub.entity.User;
 import com.technoworld.BulkTradeHub.repository.BrandRepository;
 import com.technoworld.BulkTradeHub.repository.CartRepository;
 import com.technoworld.BulkTradeHub.repository.CategoryRepository;
+import com.technoworld.BulkTradeHub.repository.DeliveryAddressesRepository;
 import com.technoworld.BulkTradeHub.repository.ProductGtinInfoRepository;
 import com.technoworld.BulkTradeHub.repository.ProductPostRepository;
 import com.technoworld.BulkTradeHub.repository.ProductRepository;
@@ -72,6 +78,9 @@ public class RetailController {
 	
 	@Autowired
 	private ProductGtinInfoRepository productGtinInfoRepository;
+	
+	@Autowired
+	private DeliveryAddressesRepository deliveryAddressesRepository;
 	
 	@GetMapping("/profile")
     public String getProfilePage(Model model,Principal principal) {
@@ -950,4 +959,116 @@ public class RetailController {
 
 	        return "redirect:/retailShop/showProducts";
 	    }
+	    
+	    @GetMapping("/manageAddresses")
+	    public String getManageAddresses() {
+	    	return "/retailshop/manageAddresses";
+	    }
+	    
+	    @PostMapping("/saveOrUpdateDeliveryAddress")
+	    @ResponseBody
+	    public ResponseEntity<?> saveOrUpdateDeliveryAddress(@RequestBody Map<String, String> payload, Principal principal) {
+	        User user = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+
+	        String idStr = payload.get("id");
+	        String name = payload.get("name");
+	        String mobile = payload.get("mobile"); 
+	        String pincode = payload.get("pincode");
+	        String locality = payload.get("locality");
+	        String address = payload.get("address");
+	        String city = payload.get("city");
+	        String state = payload.get("state");
+	        String country = payload.get("country");
+
+	        DeliveryAddresses deliveryAddress;
+
+	        if (idStr != null && !idStr.isEmpty()) {
+	            // UPDATE
+	            int id = Integer.parseInt(idStr);
+	            Optional<DeliveryAddresses> optional = deliveryAddressesRepository.findById(id);
+	            if (optional.isEmpty()) {
+	                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Address not found");
+	            }
+
+	            deliveryAddress = optional.get();
+	        } else {
+	            // ADD
+	            deliveryAddress = new DeliveryAddresses();
+	            deliveryAddress.setUserId(user.getId());
+	            
+	            // Check if this is the user's first address
+	            List<DeliveryAddresses> existingAddresses = deliveryAddressesRepository.findAllByUserId(user.getId());
+	            if (existingAddresses.isEmpty()) {
+	                deliveryAddress.setPrimary(true); // Make first address primary
+	            } else {
+	                deliveryAddress.setPrimary(false); // Other addresses are not primary by default
+	            }
+	        }
+
+	        // Set or update fields
+	        deliveryAddress.setName(name);
+	        deliveryAddress.setPhone(mobile);
+	        deliveryAddress.setPincode(pincode);
+	        deliveryAddress.setLocality(locality);
+	        deliveryAddress.setAddress(address);
+	        deliveryAddress.setCity(city);
+	        deliveryAddress.setState(state);
+	        deliveryAddress.setCountry(country);
+
+	        DeliveryAddresses saved = deliveryAddressesRepository.save(deliveryAddress);
+	        return ResponseEntity.ok(saved);
+	    }
+
+	    
+	    @GetMapping("/getDeliveryAddresses")
+	    @ResponseBody
+	    public ResponseEntity<?> getDeliveryAddresses(Principal principal) {
+	    	User user =  (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+	    	List<DeliveryAddresses> deliveryAddresses = deliveryAddressesRepository.findAllByUserId(user.getId());
+	    	return ResponseEntity.ok(deliveryAddresses);
+	    }
+	    
+	    @DeleteMapping("/deleteDeliveryAddress/{id}")
+	    @ResponseBody
+	    public ResponseEntity<?> deleteDeliveryAddress(@PathVariable("id") int id) {
+	        Optional<DeliveryAddresses> deliveryAddressesOptional = deliveryAddressesRepository.findById(id);
+	        if (deliveryAddressesOptional.isEmpty()) {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Address not found");
+	        }
+
+	        deliveryAddressesRepository.delete(deliveryAddressesOptional.get());
+	        return ResponseEntity.ok("Address deleted successfully");
+	    }
+	    
+	    @PutMapping("/makePrimaryAddress/{id}")
+	    @ResponseBody
+	    public ResponseEntity<?> makePrimaryAddress(@PathVariable("id") int id, Principal principal) {
+	        User user = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+
+	        Optional<DeliveryAddresses> optional = deliveryAddressesRepository.findById(id);
+	        if (optional.isEmpty()) {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Address not found");
+	        }
+
+	        DeliveryAddresses selectedAddress = optional.get();
+
+	        if (selectedAddress.getUserId() != user.getId()) {
+	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+	        }
+
+	        // Set all user's addresses as not primary
+	        List<DeliveryAddresses> allUserAddresses = deliveryAddressesRepository.findAllByUserId(user.getId());
+	        for (DeliveryAddresses addr : allUserAddresses) {
+	            addr.setPrimary(false);
+	        }
+
+	        // Set selected as primary
+	        selectedAddress.setPrimary(true);
+	        allUserAddresses.add(selectedAddress); // Ensure it's included in saveAll if it wasn’t before
+
+	        deliveryAddressesRepository.saveAll(allUserAddresses);
+
+	        return ResponseEntity.ok("Primary address updated");
+	    }
+
 }

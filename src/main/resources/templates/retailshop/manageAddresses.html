@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{/retailshop/retailLayout :: Layout(~{::section})}">
+
+<head>
+</head>
+
+<body>
+	<section>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+		<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+		<style>
+			.other-Info {
+				padding: 1rem 0;
+				font-family: 'Poppins', sans-serif;
+			}
+
+			.form-container {
+				max-width: 800px;
+				margin: auto;
+				padding: 1rem;
+			}
+
+			.card {
+				border: none;
+				border-radius: 10px;
+				box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+			}
+
+			.section-title {
+				color: #2c3e50;
+				font-weight: 600;
+				margin-bottom: 1rem;
+				font-size: 1.1rem;
+			}
+
+			.form-label {
+				color: #2c3e50;
+				font-weight: 500;
+			}
+
+			.form-control, .form-select {
+				padding: 0.2rem;
+				border-radius: 5px;
+				border: 1px solid #e0e0e0;
+			}
+
+			.form-control:focus, .form-select:focus {
+				border-color: #3498db;
+				box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+			}
+
+			.required-field::after {
+				content: "*";
+				color: #e74c3c;
+				margin-left: 4px;
+			}
+
+			.btn-submit {
+				background-color: #2c3e50;
+				color: #fff;
+				padding: 0.4rem 1rem;
+				border-radius: 5px;
+				font-weight: 500;
+				transition: all 0.3s ease;
+			}
+
+			.btn-submit:hover {
+				background-color: #34495e;
+				transform: translateY(-2px);
+			}
+		</style>
+		
+		<div class="other-Info">
+			<div class="form-container">
+				<div class="d-flex justify-content-between align-items-center mb-3">
+					<h4 class="section-title"><i class="fas fa-map-marker-alt me-2"></i>Your Addresses</h4>
+					<button class="btn btn-submit" data-bs-toggle="modal" data-bs-target="#addressModal">
+						<i class="fas fa-plus me-1"></i>Add Address
+					</button>
+				</div>
+
+				<!-- Address List (placeholder for dynamic addresses) -->
+				<div id="addressList">
+					<p class="text-muted">No addresses saved yet.</p>
+				</div>
+			</div>
+		</div>
+
+		<!-- Modal -->
+		<div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<form id="addressForm" onsubmit="saveAddress(event)">
+						<input type="hidden" id="addressId">
+						<div class="modal-header">
+							<h5 class="modal-title" id="addressModalLabel">Add Address</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<div class="row g-3">
+								<div class="col-md-6">
+									<label class="form-label required-field">Name</label>
+									<input type="text" class="form-control" id="name" required>
+								</div>
+								<div class="col-md-6">
+									<label class="form-label required-field">10-digit Mobile Number</label>
+									<input type="text" class="form-control" id="mobile" pattern="\d{10}" required>
+								</div>
+								<div class="col-md-6">
+									<label class="form-label required-field">Pincode</label>
+									<input type="text" class="form-control" id="pincode" required>
+								</div>
+								<div class="col-md-6">
+									<label class="form-label required-field">Locality</label>
+									<input type="text" class="form-control" id="locality" required>
+								</div>
+								<div class="col-12">
+									<label class="form-label required-field">Address (Area and Street)</label>
+									<textarea class="form-control" id="address" rows="2" required></textarea>
+								</div>
+								<div class="col-md-6">
+									<label class="form-label required-field">City/District/Town</label>
+									<input type="text" class="form-control" id="city" required>
+								</div>
+								<div class="col-md-6">
+									<label class="form-label required-field">State</label>
+									<input type="text" class="form-control" id="state" required>
+								</div>
+								<div class="col-md-12">
+									<label class="form-label required-field">Country</label>
+									<input type="text" class="form-control" id="country" required>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer justify-content-between">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+							<button type="submit" class="btn btn-submit">Add Address</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<script th:src="@{/retailshop/js/manageAddresses.js}"></script>
+
+	</section>
+</body>
+
+</html>

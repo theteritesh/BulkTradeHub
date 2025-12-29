@@ -1,5 +1,6 @@
   window.onload=function(){
 	loadCart();
+	fetchPrimaryAddress();
   };
   
   /* ------------  CART LOADER  ------------ */
@@ -415,4 +416,104 @@
   		console.error(err);
   		alert("Failed to create order.");
   	});
+  }
+  
+  
+  function fetchPrimaryAddress() {
+    const isUserLoggedIn = document.getElementById("user-logged-in") !== null;
+    if (isUserLoggedIn) {
+      fetch("/home/primaryAddress", {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          [csrfHeader]: csrfToken
+        }
+      })
+      .then(response => {
+        if (!response.ok) throw new Error("Failed to fetch primary address");
+        return response.json();
+      })
+      .then(addr => {
+        if (addr) {
+          const container = document.getElementById("primary-address-container");
+          container.classList.remove("d-none");
+
+          document.getElementById("primary-name-phone").innerText = `${addr.name} - ${addr.phone}`;
+          document.getElementById("primary-address-line-1").innerText = `${addr.address}, ${addr.locality}`;
+          document.getElementById("primary-address-line-2").innerText = `${addr.city}, ${addr.state} - ${addr.pincode}`;
+          document.getElementById("primary-address-country").innerText = addr.country;
+        }
+      })
+      .catch(err => {
+        console.error("Failed to load primary address:", err);
+      });
+    }
+  }
+
+  function showAddressModal() {
+    fetch("/home/getAllAddresses", {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        [csrfHeader]: csrfToken
+      }
+    })
+    .then(response => {
+      if (!response.ok) throw new Error("Failed to fetch addresses");
+      return response.json();
+    })
+    .then(addresses => {
+      const container = document.getElementById("address-list-container");
+      container.innerHTML = "";
+
+      if (addresses.length === 0) {
+        container.innerHTML = "<p>No saved addresses found.</p>";
+      } else {
+        addresses.forEach(addr => {
+		  if (addr.primary) return;
+          const card = document.createElement("div");
+          card.className = "card mb-2 p-3 position-relative shadow-sm address-cart-item";
+          card.style.cursor = "pointer";
+          card.onclick = () => makePrimary(addr.id);
+
+          card.innerHTML = `
+            <div>
+              <h6 class="mb-1" style="font-weight: bold;">${addr.name} - ${addr.phone}</h6>
+              <p class="mb-1">${addr.address}, ${addr.locality}</p>
+              <p class="mb-1">${addr.city}, ${addr.state} - ${addr.pincode}</p>
+              <p class="mb-0">${addr.country}</p>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      }
+
+      const modal = new bootstrap.Modal(document.getElementById('addressSelectionModal'));
+      modal.show();
+    })
+    .catch(err => {
+      console.error("Error loading addresses:", err);
+    });
+  }
+
+  function makePrimary(addressId) {
+    fetch(`/home/makePrimaryAddress/${addressId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        [csrfHeader]: csrfToken
+      }
+    })
+    .then(response => {
+      if (!response.ok) throw new Error("Failed to make primary");
+      return response.text();
+    })
+    .then(() => {
+      fetchPrimaryAddress(); // refresh frontend primary display
+      const modal = bootstrap.Modal.getInstance(document.getElementById('addressSelectionModal'));
+      modal.hide();
+    })
+    .catch(err => {
+      console.error("Failed to make address primary:", err);
+    });
   }
