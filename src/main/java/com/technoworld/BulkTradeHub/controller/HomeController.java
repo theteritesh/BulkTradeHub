@@ -57,6 +57,8 @@ import com.technoworld.BulkTradeHub.repository.RazorpayCredentialsRepository;
 import com.technoworld.BulkTradeHub.repository.UserOrderRepository;
 import com.technoworld.BulkTradeHub.repository.UserRepository;
 import com.technoworld.BulkTradeHub.service.ContactService;
+import com.technoworld.BulkTradeHub.service.InvoiceService;
+import jakarta.servlet.http.HttpServletResponse;
 
 
 @Controller
@@ -71,6 +73,9 @@ public class HomeController {
 
 	@Autowired 
 	private ContactService contactService;
+	
+	@Autowired
+	private InvoiceService invoiceService;
 	
 	@Autowired
 	private CartRepository cartRepository;
@@ -680,6 +685,7 @@ public class HomeController {
 	                itemData.put("name", productPost.getProductName());
 	                itemData.put("quantity", item.getLotsQuntity());
 	                itemData.put("amount", item.getLotPrice());
+	                itemData.put("status", item.getStatus());
 	                
 
 	                String productImage = product.getMainImage() != null
@@ -817,6 +823,32 @@ public class HomeController {
 	    deliveryAddressesRepository.saveAll(allUserAddresses);
 
 	    return ResponseEntity.ok("Primary address updated");
+	}
+	
+	@GetMapping("/secure/invoice/{orderId}")
+	public void generateInvoice(@PathVariable("orderId") int id, HttpServletResponse response, Principal principal) {
+	    try {
+	        User user = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+	        Optional<UserOrders> orderOptional = userOrderRepository.findByIdAndBuyerId(id, user.getId());
+
+	        if (orderOptional.isEmpty()) {
+	            response.sendError(HttpStatus.NOT_FOUND.value(), "Order not found");
+	            return;
+	        }
+
+	        UserOrders order = orderOptional.get();
+	        User buyer = userRepository.findById(order.getBuyerId()).orElse(user);
+
+	        response.setContentType("application/pdf");
+	        String headerKey = "Content-Disposition";
+	        String headerValue = "attachment; filename=Invoice_" + order.getRazorpayOrderId() + ".pdf";
+	        response.setHeader(headerKey, headerValue);
+
+	        invoiceService.generateInvoice(response, order, buyer);
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
 	}
 
 

@@ -52,6 +52,9 @@ function renderOrdersTable(orders) {
 				<a href="/home/secure/orderSucess/${order.id}" class="text-primary" title="View Order">
 				  <i class="bi bi-eye-fill"></i>
 				</a>
+				<a href="/home/secure/invoice/${order.id}" class="text-danger ms-3" title="Download Invoice">
+				  <i class="bi bi-file-earmark-pdf-fill"></i>
+				</a>
             </td>
         `;
         tableBody.appendChild(row);

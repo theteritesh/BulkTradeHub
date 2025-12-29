@@ -101,6 +101,9 @@ function orderItems(items,totalAmount){
 	            </td>
 	            <td>${item.amount.toFixed(2)}</td>
 	            <td>${item.quantity}</td>
+                <td>
+                    <span class="badge ${getStatusBadgeClass(item.status)}">${item.status || 'Pending'}</span>
+                </td>
 	            <td class="text-end fw-semibold">${item.total.toFixed(2)}</td>
 	        `;
 	        itemListBody.appendChild(row);
@@ -109,8 +112,16 @@ function orderItems(items,totalAmount){
 		const totalRow = document.createElement('tr');
 	    totalRow.classList.add('table-light');
 	    totalRow.innerHTML = `
-	        <td colspan="4" class="text-end fw-bold">All Total</td>
+	        <td colspan="5" class="text-end fw-bold">All Total</td>
 	        <td id="allTotal" class="text-end fw-bold">${totalAmount.toFixed(2)}</td>
 	    `;
 	    itemListBody.appendChild(totalRow);
+}
+
+function getStatusBadgeClass(status) {
+    if (status === 'Confirmed') return 'bg-info';
+    if (status === 'Shipped') return 'bg-primary';
+    if (status === 'Delivered') return 'bg-success';
+    if (status === 'Cancelled') return 'bg-danger';
+    return 'bg-secondary';
 }

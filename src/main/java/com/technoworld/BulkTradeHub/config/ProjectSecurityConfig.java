@@ -25,6 +25,7 @@ public class ProjectSecurityConfig {
 						.requestMatchers("/retailShop/**").hasRole("RETAIL")
 						.requestMatchers("/retailshop/**").hasAnyRole("RETAIL","ADMIN")
 						.requestMatchers("/business/**").hasRole("BUSINESS")
+						.requestMatchers("/seller/**").hasAnyRole("BUSINESS", "RETAIL")
 						.requestMatchers("/allPermit/**").hasAnyRole("RETAIL", "SALESMAN", "BUSINESS")
 						)
 				.formLogin(form -> form.loginPage("/login").successHandler(customSuccessHandler())
